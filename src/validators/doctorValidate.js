@@ -4,6 +4,7 @@ exports.createDoctorSchema = {
     en_name: { isString: { errorMessage: "Ism string bo'lishi kerak!" }, notEmpty: { errorMessage: "Ism talab qilinadi!" } },
 
     username: { isString: { errorMessage: "Foydalanuvchi nomi string bo'lishi kerak!" }, notEmpty: { errorMessage: "Foydalanuvchi talab qilinadi!" }, trim: { errorMessage: "Foydalanuvchi nomining orasida ochiq joy bo'lishi mumkin emas!" } },
+    password: { isString: { errorMessage: "Parol string bo'lishi kerak!" }, trim: { errorMessage: "Parol orasida ochiq joy bo'lishi mumkin emas!" }, isLength: { options: { min: 8 }, errorMessage: "Parol kamida 8 ta belgidan iborat bo'lishi kerak" } },
 
     uz_experience: { isString: { errorMessage: "Tajriba string bo'lishi kerak!" }, notEmpty: { errorMessage: "Tajriba talab qilinadi!" } },
     ru_experience: { isString: { errorMessage: "Tajriba string bo'lishi kerak!" }, notEmpty: { errorMessage: "Tajriba talab qilinadi!" } },
