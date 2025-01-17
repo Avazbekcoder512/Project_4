@@ -44,7 +44,7 @@ exports.createStaff = async (req, res) => {
 
         const fileUrl = `${supabase.storageUrl}/object/public/Images/${fileName}`;
 
-        if(data.password.length < 8) {
+        if (data.password.length < 8) {
             return res.status(400).send({
                 error: "Parol kamida 8 ta belgidan iborat bo'lishi kerak!"
             })
@@ -54,7 +54,7 @@ exports.createStaff = async (req, res) => {
         const passwordHash = await bcrypt.hash(data.password, 10)
         delete data.password
 
-        if (data.uz_position === "Registrator") {
+        if (data.uz_position === "Registrator" || data.uz_position === "registrator") {
             const staff = await staffModel.create({
                 uz_name: data.uz_name,
                 ru_name: data.ru_name,
@@ -62,7 +62,7 @@ exports.createStaff = async (req, res) => {
 
                 username: data.username,
                 password: passwordHash,
-                role: data.uz_position,
+                role: "Registrator",
 
                 uz_position: data.uz_position,
                 ru_position: data.ru_position,
@@ -263,7 +263,6 @@ exports.updateStaff = async (req, res) => {
             en_name: data.en_name || staff.en_name,
 
             username: data.username || staff.username,
-            password: passwordHash || staff.password,
 
             uz_position: data.uz_position || staff.uz_position,
             ru_position: data.ru_position || staff.ru_position,
@@ -289,6 +288,59 @@ exports.updateStaff = async (req, res) => {
             });
         }
         return res.status(500).send("Serverda xatolik!");
+    }
+}
+
+// Xodimning parolini yangilash
+exports.updateStaffPassword = async (req, res) => {
+    try {
+        const { params: { id } } = req
+
+        // Checking id to valid.
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).send({
+                error: "ID haqiqiy emas!"
+            })
+        }
+
+        const staff = await staffModel.findById(id)
+
+        if (!staff) {
+            return res.status(404).send({
+                error: "Xodim topilmadi!"
+            })
+        }
+
+        // error bilan ishlash
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).send({
+                error: errors.array().map((error) => error.msg),
+            });
+        }
+        const data = matchedData(req);
+
+        // Parolni hashlash
+        const passwordHash = await bcrypt.hash(data.password, 10)
+        delete data.password
+
+        const updatePassword = {
+            password: passwordHash
+        }
+
+        await staffModel.findByIdAndUpdate(id, updatePassword, { new: true })
+
+        return res.status(201).send({
+            message: 'Parol muvaffaqiyatli yangilandi!'
+        })
+    } catch (error) {
+        console.log(error);
+        if (error.message) {
+            return res.status(400).send({
+                error: error.message
+            })
+        }
+        return res.status(500).send('Serverda xatolik!')
     }
 }
 
