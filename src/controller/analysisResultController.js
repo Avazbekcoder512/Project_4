@@ -17,6 +17,21 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+function formatDate(date) {
+    const d = new Date(date);
+    const hours = d.getHours();
+    const minutes = d.getMinutes();
+    const day = d.getDate();
+    const month = d.getMonth() + 1;
+    const year = String(d.getFullYear()).slice(-2);
+    return `${day}/${month}/${year}, ${hours}:${String(minutes).padStart(
+        2,
+        "0"
+    )}`;
+}
+const now = new Date();
+const formattedDate = formatDate(now);
+
 // Tahlil natijasini yaratish
 exports.createAnalysisResult = async (req, res) => {
     try {
@@ -39,6 +54,12 @@ exports.createAnalysisResult = async (req, res) => {
 
         const userId = decodet.id
 
+        const doctor = await doctorModel.findById(userId)
+
+        if (!doctor) {
+            return res.status(404).send('Shifokor topilmadi!')
+        }
+
         // error bilan ishlash
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
@@ -57,7 +78,10 @@ exports.createAnalysisResult = async (req, res) => {
             analysisResult: data.analysisResult,
             diagnosis: data.diagnosis,
             recommendation: data.recommendation,
-            doctor: userId
+            doctor: doctor.uz_name,
+            doctorPhone: doctor.phoneNumber,
+            doctorPosition: doctor.uz_position,
+            createdAt: formattedDate
         })
 
         await patientModel.findByIdAndUpdate(data.patient, {
@@ -281,7 +305,7 @@ exports.updateAnalysisResult = async (req, res) => {
 
         const userId = decodet.id
 
-        const checkDoctor = await resultModel.findOne({ _id: id, doctor: userId })
+        const checkDoctor = await resultModel.findOne({ _id: id, doctorId: userId })
 
         if (!checkDoctor) {
             return res.status(403).send({
@@ -313,7 +337,9 @@ exports.updateAnalysisResult = async (req, res) => {
             analysisType: data.analysisType || oldResult.analysisType,
             analysisResult: data.analysisResult || oldResult.analysisResult,
             diagnosis: data.diagnosis || oldResult.diagnosis,
-            recommendation: data.recommendation || oldResult.recommendation
+            recommendation: data.recommendation || oldResult.recommendation,
+            createdAt: oldResult.createdAt,
+            updatedAt: formattedDate
         }
 
         await resultModel.findByIdAndUpdate(id, result, { new: true })

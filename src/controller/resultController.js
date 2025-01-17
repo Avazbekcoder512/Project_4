@@ -19,13 +19,7 @@ exports.getResult = async (req, res) => {
         const result = await patientModel.findOne({
             orderNumber: orderNumber,
             verificationCode: verificationCode
-        }).populate({
-            path: "analysisResults",
-            populate: {
-                path: "doctor",
-                model: "Doctor",
-            }
-        })
+        }).populate("analysisResults")
 
         if (!result) {
             return res.status(404).send({
@@ -59,13 +53,7 @@ exports.downloadResult = async (req, res) => {
         const result = await patientModel.findOne({
             orderNumber: orderNumber,
             verificationCode: verificationCode
-        }).populate({
-            path: "analysisResults",
-            populate: {
-                path: "doctor",
-                model: "Doctor",
-            }
-        });
+        }).populate("analysisResults");
 
         if (!result) {
             return res.status(404).send({ error: "Kiritilgan buyurtma raqami yoki tekshirish kodi noto'g'ri!" });
@@ -129,10 +117,11 @@ exports.downloadResult = async (req, res) => {
             doc.text(`Natija: ${analysis.analysisResult}`);
             doc.text(`Tashxis: ${analysis.diagnosis}`);
             doc.text(`Maslahat: ${analysis.recommendation}`);
-            doc.text(`Shifokor: ${analysis.doctor.uz_name}`);
-            doc.text(`Lavozimi: ${analysis.doctor.uz_position}`);
-            doc.text(`Shifokorning telefon raqami: ${analysis.doctor.phoneNumber}`);
-
+            doc.text(`Shifokor: ${analysis.doctor}`);
+            doc.text(`Lavozimi: ${analysis.doctorPosition}`);
+            doc.text(`Shifokorning telefon raqami: ${analysis.doctorPhone}`);
+            doc.text(`Tahlil sanasi: ${analysis.createdAt}`);
+            
             doc.moveDown();
 
             // Chiziq chizish
