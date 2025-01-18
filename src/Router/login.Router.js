@@ -1,11 +1,11 @@
 const { checkSchema } = require('express-validator')
 const { login } = require('../controller/auth/login')
 const { loginValidateSchema } = require('../validators/loginValidate')
-const { loginLimiter } = require('../middlewares/login-limiter')
+const { limiter } = require('../middlewares/limiter')
 
 const router = require('express').Router()
 
 router
-.post('/login', checkSchema(loginValidateSchema), loginLimiter, login)
+.post('/login', checkSchema(loginValidateSchema), limiter, login)
 
 module.exports = router
