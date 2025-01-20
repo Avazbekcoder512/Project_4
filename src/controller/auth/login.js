@@ -30,9 +30,10 @@ exports.login = async (req, res) => {
     // Admin user
     let user = await adminModel.findOne({ username: data.username }).lean();
 
-    if (user) {
+    if (user) {      
       // Parol to'g'riligini tekshirish
-      const checkPassword = bcrypt.compare(data.password, user.password);
+      const checkPassword = await bcrypt.compare(data.password, user.password);
+      
       if (!checkPassword) {
         return res.status(403).send({
           error: "Parol xato!",
@@ -54,9 +55,10 @@ exports.login = async (req, res) => {
     // Doctor user
     user = await doctorModel.findOne({ username: data.username })
 
-    if (user) {
+    if (user) {      
       // Parol to'g'riligini tekshirish
-      const checkPassword = bcrypt.compare(data.password, user.password);
+      const checkPassword = await bcrypt.compare(data.password, user.password);
+      
       if (!checkPassword) {
         return res.status(403).send({
           error: "Parol xato!",
@@ -79,7 +81,7 @@ exports.login = async (req, res) => {
 
     if (user) {
       // Parol to'g'riligini tekshirish
-      const checkPassword = bcrypt.compare(data.password, user.password);
+      const checkPassword = await bcrypt.compare(data.password, user.password);
       if (!checkPassword) {
         return res.status(403).send({
           error: "Parol xato!",
