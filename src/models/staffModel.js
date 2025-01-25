@@ -16,7 +16,7 @@ const staffSchema = new mongoose.Schema({
     ru_description: String,
     en_description: String,
     image: String,
-    role: {type: String, default: 'staff' }
+    role: String
 }, {timestamps: true})
 
 exports.staffModel = mongoose.model('Staff', staffSchema)

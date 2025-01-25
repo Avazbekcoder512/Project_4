@@ -54,32 +54,6 @@ exports.createStaff = async (req, res) => {
         const passwordHash = await bcrypt.hash(data.password, 10)
         delete data.password
 
-        if (data.uz_position === "Registrator" || data.uz_position === "registrator") {
-            const staff = await staffModel.create({
-                uz_name: data.uz_name,
-                ru_name: data.ru_name,
-                en_name: data.en_name,
-
-                username: data.username,
-                password: passwordHash,
-                role: "Registrator",
-
-                uz_position: data.uz_position,
-                ru_position: data.ru_position,
-                en_position: data.en_position,
-
-                uz_description: data.uz_description,
-                ru_description: data.ru_description,
-                en_description: data.en_description,
-                image: fileUrl
-            })
-
-            return res.status(200).send({
-                message: "Xodim muvaffaqiyatli yaratildi!",
-                staff
-            })
-        }
-
         const staff = await staffModel.create({
             uz_name: data.uz_name,
             ru_name: data.ru_name,
@@ -87,6 +61,7 @@ exports.createStaff = async (req, res) => {
 
             username: data.username,
             password: passwordHash,
+            role: data.role,
 
             uz_position: data.uz_position,
             ru_position: data.ru_position,
@@ -263,6 +238,7 @@ exports.updateStaff = async (req, res) => {
             en_name: data.en_name || staff.en_name,
 
             username: data.username || staff.username,
+            role: data.role || staff.role,
 
             uz_position: data.uz_position || staff.uz_position,
             ru_position: data.ru_position || staff.ru_position,

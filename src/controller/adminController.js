@@ -39,7 +39,8 @@ exports.createAdmin = async (req, res) => {
       username: data.username,
       password: passwordHash,
       gender: data.gender,
-      email: data.email
+      email: data.email,
+      role: data.role
     });
 
     return res.status(200).send({
