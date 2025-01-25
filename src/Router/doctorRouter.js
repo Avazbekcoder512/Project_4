@@ -10,12 +10,12 @@ const { passwordSchema } = require('../validators/passwordValidate')
 const router = require('express').Router()
 
 router
-.get('/doctor-search/:key', roleAccessMiddleware('admin'), searchDoctors)
-.post('/doctor-create', roleAccessMiddleware('admin'), upload.single('image'), checkSchema(createDoctorSchema), createDoctor)
-.get('/doctors', roleAccessMiddleware('admin'), getAllDoctors)
-.get('/doctor/:id', roleAccessMiddleware('admin'), getOneDoctors)
-.put('/doctor/:id/update', roleAccessMiddleware('admin'), upload.single('image'), checkSchema(updateDoctorSchema), updateDoctor)
-.put('/doctor-pasword/:id/update', roleAccessMiddleware('admin'), checkSchema(passwordSchema), updatePassword)
-.delete('/doctor/:id/delete', roleAccessMiddleware('admin'), deleteDoctor)
+.get('/doctor-search/:key', roleAccessMiddleware(['superAdmin', 'admin']), searchDoctors)
+.post('/doctor-create', roleAccessMiddleware(['superAdmin', 'admin']), upload.single('image'), checkSchema(createDoctorSchema), createDoctor)
+.get('/doctors', roleAccessMiddleware(['superAdmin', 'admin']), getAllDoctors)
+.get('/doctor/:id', roleAccessMiddleware(['superAdmin', 'admin']), getOneDoctors)
+.put('/doctor/:id/update', roleAccessMiddleware(['superAdmin', 'admin']), upload.single('image'), checkSchema(updateDoctorSchema), updateDoctor)
+.put('/doctor-pasword/:id/update', roleAccessMiddleware(['superAdmin', 'admin']), checkSchema(passwordSchema), updatePassword)
+.delete('/doctor/:id/delete', roleAccessMiddleware('superAdmin'), deleteDoctor)
 
 module.exports = router

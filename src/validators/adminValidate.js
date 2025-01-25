@@ -42,5 +42,6 @@ exports.createAdminSchema = {
         }
     },
 
+    role: { isString: { errorMessage: "Role string bo'lishi kerak!" }, notEmpty: { errorMessage: "role talab qilinadi!" } },
     email: { isEmail: { errorMessage: "Elektron pochta manzili yaroqsiz!" }, notEmpty: { errorMessage: "Elektron pochta manzili talab qilinadi!" } },
 }

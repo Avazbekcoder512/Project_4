@@ -6,11 +6,11 @@ const { createPatient, getAllPatients, getOnePatient, updatedPateint, deletePati
 const router = require('express').Router()
 
 router
-.get('/patient-search/:key', roleAccessMiddleware(['doctor', 'Registrator']), searchPatient) 
-.post('/patient-create', roleAccessMiddleware(['doctor', 'Registrator']), checkSchema(createPatientSchema), createPatient)
-.get('/patients', roleAccessMiddleware(['doctor', 'Registrator']),  getAllPatients)
+.get('/patient-search/:key', roleAccessMiddleware(['doctor', 'registrator']), searchPatient) 
+.post('/patient-create', roleAccessMiddleware(['doctor', 'registrator']), checkSchema(createPatientSchema), createPatient)
+.get('/patients', roleAccessMiddleware(['doctor', 'registrator']),  getAllPatients)
 .get('/patient/:id', roleAccessMiddleware('doctor'), getOnePatient)
 .put('/patient/:id/update', roleAccessMiddleware('doctor'), checkSchema(updatePateintSchema), updatedPateint)
-.delete('/patient/:id/delete', roleAccessMiddleware('doctor'), deletePatient)
+.delete('/patient/:id/delete', roleAccessMiddleware('superAdmin'), deletePatient)
 
 module.exports = router

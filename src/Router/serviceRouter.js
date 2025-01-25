@@ -6,10 +6,10 @@ const { createService, getAllServices, getOneService, updateService, deleteServi
 const router = require('express').Router()
 
 router
-.post('/service-create', roleAccessMiddleware('admin'), checkSchema(createServiceSchema), createService)
-.get('/services', roleAccessMiddleware('admin'), getAllServices)
-.get('/service/:id', roleAccessMiddleware('admin'), getOneService)
-.put('/service/:id/update', roleAccessMiddleware('admin'), checkSchema(updateServiceSchema), updateService)
-.delete('/service/:id/delete', roleAccessMiddleware('admin'), deleteService)
+.post('/service-create', roleAccessMiddleware(['superAdmin', 'admin']), checkSchema(createServiceSchema), createService)
+.get('/services', roleAccessMiddleware(['superAdmin', 'admin']), getAllServices)
+.get('/service/:id', roleAccessMiddleware(['superAdmin', 'admin']), getOneService)
+.put('/service/:id/update', roleAccessMiddleware(['superAdmin', 'admin']), checkSchema(updateServiceSchema), updateService)
+.delete('/service/:id/delete', roleAccessMiddleware(['superAdmin', 'admin']), deleteService)
 
 module.exports = router

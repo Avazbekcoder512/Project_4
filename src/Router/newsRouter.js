@@ -8,11 +8,11 @@ const { createNews, getAllNews, getOneNews, updateNews, deleteNews, searchNews }
 const router = require('express').Router()
 
 router
-.post('/news-create', roleAccessMiddleware('admin'), upload.single('image'), checkSchema(createNewsSchema), createNews)
-.get('/news', roleAccessMiddleware('admin'), getAllNews)
-.get('/news/:id', roleAccessMiddleware('admin'), getOneNews)
-.put('/news/:id/update', roleAccessMiddleware('admin'), upload.single('image'), checkSchema(updateNewsSchema), updateNews)
-.delete('/news/:id/delete', roleAccessMiddleware('admin'), deleteNews)
-.get('/news-search/:key', roleAccessMiddleware('admin'), searchNews)
+.post('/news-create', roleAccessMiddleware(['superAdmin', 'admin']), upload.single('image'), checkSchema(createNewsSchema), createNews)
+.get('/news', roleAccessMiddleware(['superAdmin', 'admin']), getAllNews)
+.get('/news/:id', roleAccessMiddleware(['superAdmin', 'admin']), getOneNews)
+.put('/news/:id/update', roleAccessMiddleware(['superAdmin', 'admin']), upload.single('image'), checkSchema(updateNewsSchema), updateNews)
+.delete('/news/:id/delete', roleAccessMiddleware(['superAdmin', 'admin']), deleteNews)
+.get('/news-search/:key', roleAccessMiddleware(['superAdmin', 'admin']), searchNews)
 
 module.exports = router

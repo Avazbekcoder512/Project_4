@@ -14,7 +14,7 @@ router
 .get('/staff', roleAccessMiddleware('admin'), getAllStaff)
 .get('/one-staff/:id', roleAccessMiddleware('admin'), getOneStaff)
 .put('/staff/:id/update', roleAccessMiddleware('admin'), upload.single('image'), checkSchema(updateStaffSchema), updateStaff)
-.delete('/staff/:id/delete', roleAccessMiddleware('admin'), deleteStaff)
+.delete('/staff/:id/delete', roleAccessMiddleware('superAdmin'), deleteStaff)
 .put('/staffpassword/:id/update', roleAccessMiddleware('admin'), checkSchema(passwordSchema), updateStaffPassword)
 
 module.exports = router

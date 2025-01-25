@@ -5,7 +5,7 @@ exports.createStaffSchema = {
 
     username: { isString: { errorMessage: "Foydalanuvchi nomi string bo'lishi kerak!" }, trim: { errorMessage: "Foydalanuvchi nomining orasida ochiq joy bo'lishi mumkin emas!" } },
 
-    password: { isString: { errorMessage: "Parol string bo'lishi kerak!" }, trim: { errorMessage: "Parol orasida ochiq joy bo'lishi mumkin emas!" }, isLength: { options: { min: 8 }, errorMessage: "Parol kamida 8 ta belgidan iborat bo'lishi kerak"} },
+    password: { isString: { errorMessage: "Parol string bo'lishi kerak!" }, trim: { errorMessage: "Parol orasida ochiq joy bo'lishi mumkin emas!" }, isLength: { options: { min: 8 }, errorMessage: "Parol kamida 8 ta belgidan iborat bo'lishi kerak" } },
 
     uz_position: { isString: { errorMessage: "Lavozim string bo'lishi kerak!" }, notEmpty: { errorMessage: "Lavozim talab qilinadi!" }, },
     ru_position: { isString: { errorMessage: "Lavozim string bo'lishi kerak!" }, notEmpty: { errorMessage: "Lavozim talab qilinadi!" }, },
@@ -16,6 +16,8 @@ exports.createStaffSchema = {
     ru_description: { isString: { errorMessage: "Tavsif string bo'lishi kerak!" }, notEmpty: { errorMessage: "Tavsif talab qilinadi!" }, isLength: { options: { min: 25 }, errorMessage: "Tavsif kamida 25 ta belgidan iborat bo'lishi kerak!" }, },
 
     en_description: { isString: { errorMessage: "Tavsif string bo'lishi kerak!" }, notEmpty: { errorMessage: "Tavsif talab qilinadi!" }, isLength: { options: { min: 25 }, errorMessage: "Tavsif kamida 25 ta belgidan iborat bo'lishi kerak!" }, },
+
+    role: { isString: { errorMessage: "Role string bo'lishi kerak!" }, notEmpty: { errorMessage: "role talab qilinadi!" } },
 
     image: {
         custom: {
@@ -48,6 +50,8 @@ exports.updateStaffSchema = {
     ru_description: { isString: { errorMessage: "Tavsif string bo'lishi kerak!" }, isLength: { options: { min: 25 }, errorMessage: "Tavsif kamida 25 ta belgidan iborat bo'lishi kerak!" }, },
 
     en_description: { isString: { errorMessage: "Tavsif string bo'lishi kerak!" }, isLength: { options: { min: 25 }, errorMessage: "Tavsif kamida 25 ta belgidan iborat bo'lishi kerak!" }, },
+
+    role: { isString: { errorMessage: "Role string bo'lishi kerak!" } },
 
     image: {
         custom: {

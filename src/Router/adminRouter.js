@@ -7,8 +7,8 @@ const { roleAccessMiddleware } = require('../middlewares/role-access-middleware'
 const router = require('express').Router()
 
 router
-.post('/admin-create', roleAccessMiddleware('admin'), checkSchema(createAdminSchema), createAdmin)
+.post('/admin-create', roleAccessMiddleware('superAdmin'), checkSchema(createAdminSchema), createAdmin)
 .get('/admins', roleAccessMiddleware('admin'), getAllAdmin)
-.delete('/admin/:id/delete', roleAccessMiddleware('admin'), deleteAdmin);
+.delete('/admin/:id/delete', roleAccessMiddleware('superAdmin'), deleteAdmin);
 
 module.exports = router
