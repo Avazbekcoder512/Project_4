@@ -437,9 +437,10 @@ exports.searchDoctors = async (req, res) => {
         message: "Shifokor mavjud emas!"
       })
     }
-    const doctors = data 
 
-    return res.send(doctors);
+    return res.send({
+      doctors: data
+    });
   } catch (error) {
     console.log(error);
     if (error.message) {
