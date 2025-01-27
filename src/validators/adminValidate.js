@@ -42,6 +42,20 @@ exports.createAdminSchema = {
         }
     },
 
-    role: { isString: { errorMessage: "Role string bo'lishi kerak!" }, notEmpty: { errorMessage: "role talab qilinadi!" } },
+    role: { isString: { errorMessage: "Role string bo'lishi kerak!" }, notEmpty: { errorMessage: "Role talab qilinadi!" } },
     email: { isEmail: { errorMessage: "Elektron pochta manzili yaroqsiz!" }, notEmpty: { errorMessage: "Elektron pochta manzili talab qilinadi!" } },
+
+    image: {
+        custom: {
+            options: (value, { req }) => {
+                const validMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (req.file) {
+                    if (!validMimeTypes.includes(req.file.mimetype)) {
+                        throw new Error('Image must be only JPEG, PNG, GIF, WEBP format!');
+                    }
+                }
+                return true;
+            },
+        },
+    }
 }

@@ -6,7 +6,8 @@ const adminSchema = new mongoose.Schema({
     password: String,
     gender: String,
     email: String,
-    role: String
+    role: String,
+    image: String
 }, {timestamps: true})
 
 exports.adminModel = mongoose.model('Admin', adminSchema)
