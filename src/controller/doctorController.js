@@ -424,7 +424,11 @@ exports.searchDoctors = async (req, res) => {
     const data = await doctorModel.find({
       $or: [
         { uz_name: { $regex: req.params.key } },
+        { ru_name: { $regex: req.params.key } },
+        { en_name: { $regex: req.params.key } },
         { uz_position: { $regex: req.params.key } },
+        { ru_position: { $regex: req.params.key } },
+        { en_position: { $regex: req.params.key } },
       ],
     });
 
