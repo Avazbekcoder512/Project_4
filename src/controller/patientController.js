@@ -24,6 +24,14 @@ exports.createPatient = async (req, res) => {
             })
         }
 
+        const checkEmail = await patientModel.findOne({email: data.email})
+
+        if (checkEmail) {
+            return res.status(400).send({
+                error: "Bunday emailga ega bemor allaqachon ro'yhatdan o'tgan!"
+            }) 
+        }
+
         const patient = await patientModel.create({
             name: data.name,
             date_of_birth: data.date_of_birth,
@@ -146,6 +154,14 @@ exports.updatedPateint = async (req, res) => {
             });
         }
         const data = matchedData(req);
+
+        const checkEmail = await patientModel.findOne({email: data.email})
+
+        if (checkEmail) {
+            return res.status(400).send({
+                error: "Bunday emailga ega bemor allaqachon ro'yhatdan o'tgan!"
+            }) 
+        }
 
         const updatedPateint = {
             name: data.name || patient.name,
