@@ -435,10 +435,11 @@ exports.searchDoctors = async (req, res) => {
     if (data.length == 0) {
       return res.status(404).send({
         message: "Shifokor mavjud emas!"
-      })    
+      })
     }
+    const doctors = data 
 
-    return res.send(data);
+    return res.send(doctors);
   } catch (error) {
     console.log(error);
     if (error.message) {

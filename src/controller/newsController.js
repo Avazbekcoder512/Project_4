@@ -308,7 +308,9 @@ exports.searchNews = async (req, res) => {
             })
         }
 
-        return res.send(data)
+        const news = data
+
+        return res.send(news)
     } catch (error) {
         console.log(error);
     if (error.message) {
