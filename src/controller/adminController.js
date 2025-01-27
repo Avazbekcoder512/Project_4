@@ -30,6 +30,38 @@ exports.createAdmin = async (req, res) => {
       })
     }
 
+    if (!req.file) {
+      return res.status(400).send({
+        error: "Iltimos, rasm faylni yuklang!",
+      });
+    }
+
+    // Rasm hajmini tekshirish (maksimal 2 MB)
+    const maxFileSize = 2 * 1024 * 1024; // 2 MB
+    if (req.file.size > maxFileSize) {
+      return res.status(400).send({
+        error: "Rasm hajmi 2 MB dan oshmasligi kerak!",
+      });
+    }
+
+    // Faylni Supabase storagega yuklash
+    const { buffer, originalname } = req.file;
+    const fileName = `admins/${Date.now()}-${originalname}`;
+
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from("Images") // Bu yerda bucket nomini yozing
+      .upload(fileName, buffer, {
+        cacheControl: "3600",
+        upsert: false,
+        contentType: req.file.mimetype,
+      });
+
+    if (uploadError) {
+      throw new Error(`Fayl yuklanmadi: ${uploadError.message}`);
+    }
+
+    const fileUrl = `${supabase.storageUrl}/object/public/Images/${fileName}`;
+
     // Parolni hashlash
     const passwordHash = await bcrypt.hash(data.password, 10)
     delete data.password
@@ -40,7 +72,8 @@ exports.createAdmin = async (req, res) => {
       password: passwordHash,
       gender: data.gender,
       email: data.email,
-      role: data.role
+      role: data.role,
+      image: fileUrl 
     });
 
     return res.status(200).send({
@@ -101,6 +134,32 @@ exports.deleteAdmin = async (req, res) => {
         error: "Admin not found!"
       });
     }
+
+    const fileUrl = admin.image
+
+    if (fileUrl) {
+      const filePath = fileUrl.replace(`${supabase.storageUrl}/object/public/Images/`, '');
+
+      // Faylning mavjudligini tekshirish
+      const { data: fileExists, error: checkError } = await supabase
+        .storage
+        .from('Images')
+        .list('', { prefix: filePath });
+
+      if (checkError) {
+        console.error(`Fayl mavjudligini tekshirishda xatolik: ${checkError.message}`);
+      } else if (fileExists && fileExists.length > 0) {
+        // Faylni o‘chirish
+        const { error: deleteError } = await supabase
+          .storage
+          .from('Images')
+          .remove([filePath]);
+
+        if (deleteError) {
+          throw new Error(`Faylni o'chirishda xatolik: ${deleteError.message}`);
+        }
+      }
+    }
     
     await adminModel.findByIdAndDelete(id);
 
@@ -114,6 +173,3 @@ exports.deleteAdmin = async (req, res) => {
     });
   }
 };
-
-
-
