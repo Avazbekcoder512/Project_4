@@ -244,9 +244,9 @@ exports.searchPatient = async (req, res) => {
             })
         }
 
-        const patient = data
-
-        return res.status(200).send(patient)
+        return res.status(200).send({
+            patients: data
+        })
 
     } catch (error) {
         console.log(error);

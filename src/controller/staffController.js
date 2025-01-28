@@ -386,7 +386,11 @@ exports.searchStaff = async (req, res) => {
             {
                 "$or": [
                     { uz_name: { $regex: req.params.key } },
-                    { uz_position: { $regex: req.params.key } }
+                    { ru_name: { $regex: req.params.key } },
+                    { en_name: { $regex: req.params.key } },
+                    { uz_position: { $regex: req.params.key } },
+                    { ru_position: { $regex: req.params.key } },
+                    { en_position: { $regex: req.params.key } }
                 ]
             }
         )
@@ -397,7 +401,9 @@ exports.searchStaff = async (req, res) => {
             })
         }
 
-        return res.send(data)
+        return res.status(200).send({
+            staff: data
+        })
 
     } catch (error) {
         console.log(error);

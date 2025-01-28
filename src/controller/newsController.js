@@ -298,7 +298,9 @@ exports.searchNews = async (req, res) => {
     try {
         const data = await newsModel.find({
             $or: [
-                { uz_title: { $regex: req.params.key } }
+                { uz_title: { $regex: req.params.key } },
+                { ru_title: { $regex: req.params.key } },
+                { en_title: { $regex: req.params.key } }
             ]
         })
 
@@ -308,9 +310,9 @@ exports.searchNews = async (req, res) => {
             })
         }
 
-        const news = data
-
-        return res.send(news)
+        return res.status(200).send({
+            news: data
+        })
     } catch (error) {
         console.log(error);
     if (error.message) {
