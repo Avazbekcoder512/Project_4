@@ -210,7 +210,9 @@ exports.searchAnalysis = async (req, res) => {
             });
         }
 
-        return res.status(200).send(data);
+        return res.status(200).send({
+            analysis: data
+        });
     } catch (error) {
         console.log(error);
         if (error.message) {

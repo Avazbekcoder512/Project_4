@@ -7,7 +7,7 @@ const bcrypt = require("bcrypt");
 // Supabase clientni sozlash
 const supabase = createClient(
   process.env.Supabase_URL,
-  process.env.Supabase_KEY,
+  process.env.Supabase_KEY
 );
 
 // Doctor yaratish
@@ -61,8 +61,8 @@ exports.createDoctor = async (req, res) => {
     const fileUrl = `${supabase.storageUrl}/object/public/Images/${fileName}`;
 
     // Parolni hashlash
-    const passwordHash = await bcrypt.hash(data.password, 10)
-    delete data.password
+    const passwordHash = await bcrypt.hash(data.password, 10);
+    delete data.password;
 
     const doctor = await doctorModel.create({
       uz_name: data.uz_name,
@@ -174,7 +174,9 @@ exports.getOneDoctors = async (req, res) => {
 // Doctor ma'lumotlarini yangilash
 exports.updateDoctor = async (req, res) => {
   try {
-    const { params: { id }, } = req;
+    const {
+      params: { id },
+    } = req;
 
     // ID ni tekshirish
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -206,54 +208,60 @@ exports.updateDoctor = async (req, res) => {
       return res.status(400).send({ message: "Telefon raqam noto'g'ri!" });
     }
 
-    let fileUrl = doctor.image; // Mavjud rasmni saqlash    
+    let fileUrl = doctor.image; // Mavjud rasmni saqlash
 
     if (req.file) {
       try {
         if (fileUrl) {
-          const filePath = fileUrl.replace(`${supabase.storageUrl}/object/public/Images/`, '');
-    
+          const filePath = fileUrl.replace(
+            `${supabase.storageUrl}/object/public/Images/`,
+            ""
+          );
+
           // Faylning mavjudligini tekshirish
-          const { data: fileExists, error: checkError } = await supabase
-            .storage
-            .from('Images')
-            .list('', { prefix: filePath });
-    
+          const { data: fileExists, error: checkError } = await supabase.storage
+            .from("Images")
+            .list("", { prefix: filePath });
+
           if (checkError) {
-            console.error(`Fayl mavjudligini tekshirishda xatolik: ${checkError.message}`);
+            console.error(
+              `Fayl mavjudligini tekshirishda xatolik: ${checkError.message}`
+            );
           } else if (fileExists && fileExists.length > 0) {
             // Faylni o‘chirish
-            const { error: deleteError } = await supabase
-              .storage
-              .from('Images')
+            const { error: deleteError } = await supabase.storage
+              .from("Images")
               .remove([filePath]);
-    
+
             if (deleteError) {
-              throw new Error(`Faylni o'chirishda xatolik: ${deleteError.message}`);
-            } 
+              throw new Error(
+                `Faylni o'chirishda xatolik: ${deleteError.message}`
+              );
+            }
           }
         }
-    
+
         // Yangi faylni yuklash
         const { buffer, originalname } = req.file;
         const fileName = `doctors/${Date.now()}-${originalname}`;
-        const { data: uploadData, error: uploadError } = await supabase
-          .storage
-          .from('Images')
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("Images")
           .upload(fileName, buffer, {
-            cacheControl: '3600',
+            cacheControl: "3600",
             upsert: true,
             contentType: req.file.mimetype,
           });
-    
+
         if (uploadError) {
           throw new Error(`Fayl yuklanmadi: ${uploadError.message}`);
         }
-    
+
         fileUrl = `${supabase.storageUrl}/object/public/Images/${fileName}`;
       } catch (err) {
         console.error(`Faylni yangilashda xatolik: ${err.message}`);
-        throw new Error("Yangi faylni yuklash yoki eski faylni o‘chirishda muammo!");
+        throw new Error(
+          "Yangi faylni yuklash yoki eski faylni o‘chirishda muammo!"
+        );
       }
     }
 
@@ -283,7 +291,7 @@ exports.updateDoctor = async (req, res) => {
 
       gender: data.gender || doctor.gender,
       phoneNumber: data.phoneNumber || doctor.phoneNumber,
-      image: fileUrl || doctor.image 
+      image: fileUrl || doctor.image,
     };
 
     await doctorModel.findByIdAndUpdate(id, updateDoctor);
@@ -306,7 +314,9 @@ exports.updateDoctor = async (req, res) => {
 // Parolni yangilash
 exports.updatePassword = async (req, res) => {
   try {
-    const { params: { id }, } = req;
+    const {
+      params: { id },
+    } = req;
 
     // ID ni tekshirish
     if (!id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -337,12 +347,12 @@ exports.updatePassword = async (req, res) => {
     delete data.password;
 
     const updatedPassword = {
-      password: passwordHash
-    }
+      password: passwordHash,
+    };
 
-    await doctorModel.findByIdAndUpdate(id, updatedPassword, {new: true})
+    await doctorModel.findByIdAndUpdate(id, updatedPassword, { new: true });
 
-    return res.status(201).send('Parol muvaffaqiyatli yangilandi!')
+    return res.status(201).send("Parol muvaffaqiyatli yangilandi!");
   } catch (error) {
     console.log(error);
     if (error.message) {
@@ -352,7 +362,7 @@ exports.updatePassword = async (req, res) => {
     }
     return res.status(500).send("Serverda xatolik!");
   }
-}
+};
 
 // Doctorni o'chirish
 exports.deleteDoctor = async (req, res) => {
@@ -376,29 +386,32 @@ exports.deleteDoctor = async (req, res) => {
       });
     }
 
-    const fileUrl = doctor.image
+    const fileUrl = doctor.image;
 
     if (fileUrl) {
-      const filePath = fileUrl.replace(`${supabase.storageUrl}/object/public/Images/`, '');
+      const filePath = fileUrl.replace(
+        `${supabase.storageUrl}/object/public/Images/`,
+        ""
+      );
 
       // Faylning mavjudligini tekshirish
-      const { data: fileExists, error: checkError } = await supabase
-        .storage
-        .from('Images')
-        .list('', { prefix: filePath });
+      const { data: fileExists, error: checkError } = await supabase.storage
+        .from("Images")
+        .list("", { prefix: filePath });
 
       if (checkError) {
-        console.error(`Fayl mavjudligini tekshirishda xatolik: ${checkError.message}`);
+        console.error(
+          `Fayl mavjudligini tekshirishda xatolik: ${checkError.message}`
+        );
       } else if (fileExists && fileExists.length > 0) {
         // Faylni o‘chirish
-        const { error: deleteError } = await supabase
-          .storage
-          .from('Images')
+        const { error: deleteError } = await supabase.storage
+          .from("Images")
           .remove([filePath]);
 
         if (deleteError) {
           throw new Error(`Faylni o'chirishda xatolik: ${deleteError.message}`);
-        } 
+        }
       }
     }
 
@@ -434,12 +447,12 @@ exports.searchDoctors = async (req, res) => {
 
     if (data.length == 0) {
       return res.status(404).send({
-        message: "Shifokor mavjud emas!"
-      })
+        message: "Shifokor mavjud emas!",
+      });
     }
 
-    return res.send({
-      doctors: data
+    return res.status(200).send({
+      doctors: data,
     });
   } catch (error) {
     console.log(error);
