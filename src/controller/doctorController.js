@@ -42,6 +42,14 @@ exports.createDoctor = async (req, res) => {
       });
     }
 
+    // Rasm hajmini tekshirish (maksimal 2 MB)
+    const maxFileSize = 2 * 1024 * 1024; // 2 MB
+    if (req.file.size > maxFileSize) {
+      return res.status(400).send({
+        error: "Rasm hajmi 2 MB dan oshmasligi kerak!",
+      });
+    }
+
     // Faylni Supabase storagega yuklash
     const { buffer, originalname } = req.file;
     const fileName = `doctors/${Date.now()}-${originalname}`;
@@ -212,6 +220,14 @@ exports.updateDoctor = async (req, res) => {
 
     if (req.file) {
       try {
+        // Rasm hajmini tekshirish (maksimal 2 MB)
+        const maxFileSize = 2 * 1024 * 1024; // 2 MB
+        if (req.file.size > maxFileSize) {
+          return res.status(400).send({
+            error: "Rasm hajmi 2 MB dan oshmasligi kerak!",
+          });
+        }
+
         if (fileUrl) {
           const filePath = fileUrl.replace(
             `${supabase.storageUrl}/object/public/Images/`,
