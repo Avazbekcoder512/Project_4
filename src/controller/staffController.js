@@ -400,7 +400,7 @@ exports.searchStaff = async (req, res) => {
     try {
         const data = await staffModel.find(
             {
-                "$or": [
+                $or: [
                     { uz_name: { $regex: req.params.key } },
                     { ru_name: { $regex: req.params.key } },
                     { en_name: { $regex: req.params.key } },
