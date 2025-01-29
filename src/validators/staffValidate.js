@@ -22,10 +22,10 @@ exports.createStaffSchema = {
     image: {
         custom: {
             options: (value, { req }) => {
-                const validMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                const validMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg', 'image/webp'];
                 if (req.file) {
                     if (!validMimeTypes.includes(req.file.mimetype)) {
-                        throw new Error('Image must be only JPEG, PNG, GIF, WEBP format!');
+                        throw new Error('Image must be only JPEG, JPG, PNG, SVG, WEBP format!');
                     }
                 }
                 return true;
@@ -56,10 +56,10 @@ exports.updateStaffSchema = {
     image: {
         custom: {
             options: (value, { req }) => {
-                const validMimeTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                const validMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg', 'image/webp'];
                 if (req.file) {
                     if (!validMimeTypes.includes(req.file.mimetype)) {
-                        throw new Error('Image must be only JPEG, PNG, GIF, WEBP format!');
+                        throw new Error('Image must be only JPEG, JPG, PNG, SVG, WEBP format!');
                     }
                 }
                 return true;
