@@ -78,6 +78,7 @@ exports.createStaff = async (req, res) => {
             uz_description: data.uz_description,
             ru_description: data.ru_description,
             en_description: data.en_description,
+            gender: data.gender,
             image: fileUrl
         })
 
@@ -263,6 +264,7 @@ exports.updateStaff = async (req, res) => {
             uz_description: data.uz_description || staff.uz_description,
             ru_description: data.ru_description || staff.ru_description,
             en_description: data.en_description || staff.en_description,
+            gender: data.gender || staff.gender,
             image: fileUrl || staff.image
         }
 

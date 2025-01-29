@@ -19,6 +19,8 @@ exports.createStaffSchema = {
 
     role: { isString: { errorMessage: "Role string bo'lishi kerak!" }, notEmpty: { errorMessage: "role talab qilinadi!" } },
 
+    gender: { isString: { errorMessage: "Gender string bo'lishi kerak" }, notEmpty: { errorMessage: 'Gender talab qilinadi!' } },
+
     image: {
         custom: {
             options: (value, { req }) => {
@@ -52,6 +54,8 @@ exports.updateStaffSchema = {
     en_description: { isString: { errorMessage: "Tavsif string bo'lishi kerak!" }, isLength: { options: { min: 25 }, errorMessage: "Tavsif kamida 25 ta belgidan iborat bo'lishi kerak!" }, },
 
     role: { isString: { errorMessage: "Role string bo'lishi kerak!" } },
+
+    gender: { isString: { errorMessage: "Gender string bo'lishi kerak" }},
 
     image: {
         custom: {
