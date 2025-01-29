@@ -45,9 +45,9 @@ exports.createSection = async (req, res) => {
 // Hamma bo'limlarni ko'rish
 exports.getSection = async (req, res) => {
     try {
-        const section = await sectionModel.find().populate("analysis")
+        const sections = await sectionModel.find().populate("analysis")
 
-        if (!section) {
+        if (!sections) {
             return res.status(404).send({
                 error: "Bo'lim topilmadi!"
             })
@@ -55,7 +55,7 @@ exports.getSection = async (req, res) => {
 
         return res.status(200).send({
             message: "Bo'limlar ro'yhati!",
-            section
+            sections
         })
     } catch (error) {
         console.log(error);
