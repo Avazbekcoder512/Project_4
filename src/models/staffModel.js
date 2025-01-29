@@ -15,6 +15,7 @@ const staffSchema = new mongoose.Schema({
     uz_description: String,
     ru_description: String,
     en_description: String,
+    gender: String,
     image: String,
     role: String
 }, {timestamps: true})
