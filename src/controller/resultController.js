@@ -7,8 +7,14 @@ const fs = require('fs')
 // Bemorga tahlil natijasini ko'rsatish
 exports.getResult = async (req, res) => {
     try {
-        const orderNumber = req.query.orderNumber;
+        const orderNumber = Number(req.query.orderNumber);
         const verificationCode = req.query.verificationCode
+
+        if (isNaN(orderNumber)) {
+            return res.status(400).send({
+                error: "Tartib raqamni sonda kiriting!"
+            });
+        }
 
         if (!orderNumber || !verificationCode) {
             return res.status(400).send({
@@ -44,7 +50,14 @@ exports.getResult = async (req, res) => {
 
 exports.downloadResult = async (req, res) => {
     try {
-        const { orderNumber, verificationCode } = req.query
+        const orderNumber = Number(req.query.orderNumber);
+        const verificationCode = req.query.verificationCode
+
+        if (isNaN(orderNumber)) {
+            return res.status(400).send({
+                error: "Tartib raqamni sonda kiriting!"
+            });
+        }
 
         if (!orderNumber || !verificationCode) {
             return res.status(400).send({ error: "Iltimos, buyurtma raqami va tekshirish kodini kiriting!" })
