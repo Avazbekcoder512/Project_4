@@ -1,3 +1,5 @@
+const { fromBuffer } = require("file-type");
+
 exports.createStaffSchema = {
     uz_name: { isString: { errorMessage: "Ism string bo'lishi kerak!" }, notEmpty: { errorMessage: "Ism talab qilinadi!" } },
     ru_name: { isString: { errorMessage: "Ism string bo'lishi kerak!" }, notEmpty: { errorMessage: "Ism talab qilinadi!" } },
@@ -23,10 +25,12 @@ exports.createStaffSchema = {
 
     image: {
         custom: {
-            options: (value, { req }) => {
+            options: async (value, { req }) => {
                 const validMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg', 'image/webp'];
                 if (req.file) {
-                    if (!validMimeTypes.includes(req.file.mimetype)) {
+                    const fileType = await fromBuffer(req.file.buffer)
+
+                    if (!fileType || !validMimeTypes.includes(fileType.mime)) {
                         throw new Error('Image must be only JPEG, JPG, PNG, SVG, WEBP format!');
                     }
                 }
@@ -55,14 +59,16 @@ exports.updateStaffSchema = {
 
     role: { isString: { errorMessage: "Role string bo'lishi kerak!" } },
 
-    gender: { isString: { errorMessage: "Gender string bo'lishi kerak" }},
+    gender: { isString: { errorMessage: "Gender string bo'lishi kerak" } },
 
     image: {
         custom: {
-            options: (value, { req }) => {
+            options: async (value, { req }) => {
                 const validMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg', 'image/webp'];
                 if (req.file) {
-                    if (!validMimeTypes.includes(req.file.mimetype)) {
+                    const fileType = await fromBuffer(req.file.buffer)
+
+                    if (!fileType || !validMimeTypes.includes(fileType.mime)) {
                         throw new Error('Image must be only JPEG, JPG, PNG, SVG, WEBP format!');
                     }
                 }
