@@ -24,12 +24,12 @@ exports.createPatient = async (req, res) => {
             })
         }
 
-        const checkEmail = await patientModel.findOne({email: data.email})
+        const checkEmail = await patientModel.findOne({ email: data.email })
 
         if (checkEmail) {
             return res.status(400).send({
                 error: "Bunday emailga ega bemor allaqachon ro'yhatdan o'tgan!"
-            }) 
+            })
         }
 
         const patient = await patientModel.create({
@@ -62,7 +62,7 @@ exports.createPatient = async (req, res) => {
 exports.getAllPatients = async (req, res) => {
     try {
         const patients = await patientModel.find()
-        
+
         if (!patients || patients.length == 0) {
             return res.status(404).send({
                 error: "Bemorlar mavjud emas!"
@@ -155,12 +155,12 @@ exports.updatedPateint = async (req, res) => {
         }
         const data = matchedData(req);
 
-        const checkEmail = await patientModel.findOne({email: data.email})
+        const checkEmail = await patientModel.findOne({ email: data.email })
 
         if (checkEmail) {
             return res.status(400).send({
                 error: "Bunday emailga ega bemor allaqachon ro'yhatdan o'tgan!"
-            }) 
+            })
         }
 
         const updatedPateint = {
@@ -230,13 +230,21 @@ exports.deletePatient = async (req, res) => {
 // Bemorni qidirish
 exports.searchPatient = async (req, res) => {
     try {
+        const searchValue = Number(req.params.key); // Stringni Number ga aylantirish
+
+        if (isNaN(searchValue)) {
+            return res.status(400).send({
+                error: "Qidirish uchun faqat son kiriting!"
+            });
+        }
+
         const data = await patientModel.find(
             {
                 "$or": [
-                    { orderNumber: { $regex: req.params.key } },
+                    { orderNumber: searchValue } // To'g'ridan-to'g'ri number bilan qidirish
                 ]
             }
-        )
+        );
 
         if (data.length == 0) {
             return res.status(404).send({

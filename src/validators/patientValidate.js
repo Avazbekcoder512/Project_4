@@ -35,7 +35,7 @@ exports.createPatientSchema = {
   },
 
   orderNumber: {
-    isString: { errorMessage: "Tartib raqami raqam bo'lishi kerak!" },
+    isInt: { errorMessage: "Tartib raqami raqam bo'lishi kerak!" },
     notEmpty: { errorMessage: "Tartib raqami talab qilinadi!" },
   },
 };
