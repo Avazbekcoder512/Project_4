@@ -5,7 +5,7 @@ const patientSchema = new mongoose.Schema({
     date_of_birth: String,
     gender: String,
     email: String,
-    orderNumber: String,
+    orderNumber: Number,
     verificationCode: String,
     analysisResults: [{ type: mongoose.Schema.Types.ObjectId, ref: 'AnalysisResult' }]
 }, { timestamps: true })
