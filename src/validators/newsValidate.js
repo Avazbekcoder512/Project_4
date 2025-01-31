@@ -1,3 +1,5 @@
+const { fromBuffer } = require("file-type");
+
 exports.createNewsSchema = {
     uz_title: { isString: { errorMessage: "Sarlavha string bo'lishi kerak!" }, notEmpty: { errorMessage: "Sarlavha talab qilinadi!" } },
     ru_title: { isString: { errorMessage: "Sarlavha string bo'lishi kerak!" }, notEmpty: { errorMessage: "Sarlavha talab qilinadi!" } },
@@ -10,10 +12,12 @@ exports.createNewsSchema = {
     en_description: { isString: { errorMessage: "Tavsif string bo'lishi kerak!" }, notEmpty: { errorMessage: "Tavsif talab qilinadi!" }, isLength: { options: { min: 25 }, errorMessage: "Tavsif kamida 25 ta belgidan iborat bo'lishi kerak!" }, },
     image: {
         custom: {
-            options: (value, { req }) => {
+            options: async (value, { req }) => {
                 const validMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg', 'image/webp'];
                 if (req.file) {
-                    if (!validMimeTypes.includes(req.file.mimetype)) {
+                    const fileType = await fromBuffer(req.file.buffer)
+
+                    if (!fileType || !validMimeTypes.includes(fileType.mime)) {
                         throw new Error('Image must be only JPEG, JPG, PNG, SVG, WEBP format!');
                     }
                 }
@@ -36,10 +40,12 @@ exports.updateNewsSchema = {
 
     image: {
         custom: {
-            options: (value, { req }) => {
+            options: async (value, { req }) => {
                 const validMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/svg', 'image/webp'];
                 if (req.file) {
-                    if (!validMimeTypes.includes(req.file.mimetype)) {
+                    const fileType = await fromBuffer(req.file.buffer)
+
+                    if (!fileType || !validMimeTypes.includes(fileType.mime)) {
                         throw new Error('Image must be only JPEG, JPG, PNG, SVG, WEBP format!');
                     }
                 }
