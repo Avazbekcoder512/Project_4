@@ -28,8 +28,7 @@ exports.createStaff = async (req, res) => {
             })
         }
 
-        // Rasm hajmini tekshirish (maksimal 2 MB)
-        const maxFileSize = 2 * 1024 * 1024; // 2 MB
+        const maxFileSize = 5 * 1024 * 1024;
         if (req.file.size > maxFileSize) {
             return res.status(400).send({
                 error: "Rasm hajmi 2 MB dan oshmasligi kerak!",
@@ -194,8 +193,7 @@ exports.updateStaff = async (req, res) => {
 
         if (req.file) {
             try {
-                // Rasm hajmini tekshirish (maksimal 2 MB)
-                const maxFileSize = 2 * 1024 * 1024; // 2 MB
+                const maxFileSize = 5 * 1024 * 1024;
                 if (req.file.size > maxFileSize) {
                     return res.status(400).send({
                         error: "Rasm hajmi 2 MB dan oshmasligi kerak!",
