@@ -450,14 +450,16 @@ exports.deleteDoctor = async (req, res) => {
 // Doctorlarni qidirish
 exports.searchDoctors = async (req, res) => {
   try {
+    const key = req.params.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(key, 'i');
     const data = await doctorModel.find({
       $or: [
-        { uz_name: { $regex: req.params.key } },
-        { ru_name: { $regex: req.params.key } },
-        { en_name: { $regex: req.params.key } },
-        { uz_position: { $regex: req.params.key } },
-        { ru_position: { $regex: req.params.key } },
-        { en_position: { $regex: req.params.key } },
+        { uz_name: { $regex: regex } },
+        { ru_name: { $regex: regex } },
+        { en_name: { $regex: regex } },
+        { uz_position: { $regex: regex } },
+        { ru_position: { $regex: regex } },
+        { en_position: { $regex: regex } },
       ],
     });
 

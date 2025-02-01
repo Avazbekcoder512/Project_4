@@ -196,8 +196,7 @@ exports.searchAnalysis = async (req, res) => {
     try {
         // req.params.key ni xavfsiz qilish uchun maxsus belgilarni qochirish
         const key = req.params.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
-        const regex = new RegExp(key, 'i'); // 'i' flag bilan katta-kichik harfga sezgir emas bo'ladi
-
+        const regex = new RegExp(key, 'i');
         const data = await analysisModel.find({
             $or: [
                 { name: { $regex: regex } }

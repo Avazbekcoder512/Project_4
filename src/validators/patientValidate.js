@@ -17,7 +17,7 @@ exports.createPatientSchema = {
 
         const [day, month, year] = value.split("-").map(Number);
         const isValidDate = !isNaN(new Date(year, month - 1, day).getTime());
-        if (!isValidDate || day < 1 || day > 31 || month < 1 || month > 12) {
+        if (!isValidDate || day < 1 || day > 31 || month < 1 || month > 12 || 1910 > year) {
           throw new Error("Tu'g'ilgan kun haqiqiy sana emas!");
         }
         return true;
@@ -35,7 +35,7 @@ exports.createPatientSchema = {
   },
 
   orderNumber: {
-    isInt: { errorMessage: "Tartib raqami raqam bo'lishi kerak!" },
+    isInt: { errorMessage: "Tartib raqami son bo'lishi kerak!" },
     notEmpty: { errorMessage: "Tartib raqami talab qilinadi!" },
   },
 };
@@ -56,7 +56,7 @@ exports.updatePateintSchema = {
 
         const [day, month, year] = value.split("-").map(Number);
         const isValidDate = !isNaN(new Date(year, month - 1, day).getTime());
-        if (!isValidDate || day < 1 || day > 31 || month < 1 || month > 12) {
+        if (!isValidDate || day < 1 || day > 31 || month < 1 || month > 12 || 1910 > year) {
           throw new Error("Tu'g'ilgan kun haqiqiy sana emas!");
         }
         return true;

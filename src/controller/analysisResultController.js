@@ -515,9 +515,11 @@ exports.deleteAnalysisResult = async (req, res) => {
 // Tahlil natijasini qidirish
 exports.searchAnalysisResult = async (req, res) => {
     try {
+        const key = req.params.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+        const regex = new RegExp(key, 'i');
         const data = await resultModel.find({
             $or: [
-                { analysisType: { $regex: req.params.key } }
+                { analysisType: { $regex: regex } }
             ]
         })
 
