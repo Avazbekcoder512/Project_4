@@ -199,9 +199,11 @@ exports.deleteSection = async (req, res) => {
 // Bo'limni qidirish
 exports.searchSection = async (req, res) => {
     try {
+        const key = req.params.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+        const regex = new RegExp(key, 'i');
         const data = await sectionModel.find({
             $or: [
-                { uz_name: { $regex: req.params.key } }
+                { uz_name: { $regex: regex } }
             ]
         }).populate('analysis')
 

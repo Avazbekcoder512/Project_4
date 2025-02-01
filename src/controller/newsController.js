@@ -327,11 +327,13 @@ exports.deleteNews = async (req, res) => {
 
 exports.searchNews = async (req, res) => {
     try {
+        const key = req.params.key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); 
+        const regex = new RegExp(key, 'i');
         const data = await newsModel.find({
             $or: [
-                { uz_title: { $regex: req.params.key } },
-                { ru_title: { $regex: req.params.key } },
-                { en_title: { $regex: req.params.key } },
+                { uz_title: { $regex: regex } },
+                { ru_title: { $regex: regex } },
+                { en_title: { $regex: regex } },
             ],
         });
 
