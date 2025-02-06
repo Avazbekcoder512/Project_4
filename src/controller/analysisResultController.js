@@ -345,6 +345,17 @@ exports.getOneAnalysisResult = async (req, res) => {
 // Tahlil natijasini yangilash
 exports.updateAnalysisResult = async (req, res) => {
     try {
+        const {
+            params: { id },
+        } = req;
+
+        // Checking id to valid.
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).send({
+                error: "ID haqiqiy emas!",
+            });
+        }
+
         // Authorization headerdan tokenni olish
         const authHeader = req.headers["authorization"];
         if (!authHeader) {
@@ -361,17 +372,6 @@ exports.updateAnalysisResult = async (req, res) => {
         }
 
         const decodet = jwt.verify(token, process.env.JWT_KEY);
-
-        const {
-            params: { id },
-        } = req;
-
-        // Checking id to valid.
-        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
-            return res.status(400).send({
-                error: "ID haqiqiy emas!",
-            });
-        }
         const userId = decodet.id;
 
         const oldResult = await resultModel.findById(id);
@@ -626,11 +626,36 @@ exports.deleteAnalysisResult = async (req, res) => {
             });
         }
 
+        // Authorization headerdan tokenni olish
+        const authHeader = req.headers["authorization"];
+        if (!authHeader) {
+            return res.status(404).send({
+                error: "Token not found",
+            });
+        }
+
+        const token = authHeader.split(" ")[1]; // "Bearer <token>" formatidan tokenni ajratish
+        if (!token) {
+            return res.status(404).send({
+                error: "Token not provided",
+            });
+        }
+
+        const decodet = jwt.verify(token, process.env.JWT_KEY);
+
+        const userId = decodet.id
+
         const result = await resultModel.findById(id);
 
         if (!result) {
             res.status(404).send({
                 error: "Tahlil natijasi topilmadi!",
+            });
+        }
+
+        if (result.doctorId.toString() !== userId) {
+            return res.status(403).send({
+                error: "Sizga bu tahlil natijasini o'chirishga ruxsat yo'q!",
             });
         }
 
