@@ -5,9 +5,12 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const path = require('path')
+const { runBot } = require('./src/bot/bot')
 require('dotenv').config()
 
 connectDB()
+runBot()
+
 const app = express()
 
 app.use(cors());
