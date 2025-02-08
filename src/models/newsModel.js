@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const newsSchema = new mongoose.Schema({
     uz_title: String,
@@ -10,5 +11,7 @@ const newsSchema = new mongoose.Schema({
     en_description: String,
     image: String
 }, {timestamps: true})
+
+newsSchema.plugin(mongoosePaginate)
 
 exports.newsModel = mongoose.model('News', newsSchema)
