@@ -1,11 +1,19 @@
 const { Keyboard } = require("grammy")
 
+const keyboard = new Keyboard()
+    .text("📋 Menyu")
+    .resized()
+
 exports.commands = async (bot) => {
     bot.command('ijtimoiy_tarmoqlar', async (ctx) => {
         await ctx.reply(
             `Telegram:      🔗 <a href='https://t.me/HAYAT_Medical_Centre'>Havola</a>\n
-Instagram:      🔗 <a href='https://www.instagram.com/hayatmedcentre/'>Havola</a>`,
-            { parse_mode: 'HTML' })
+Instagram:      🔗 <a href='https://www.instagram.com/hayatmedcentre/'>Havola</a>\n
+Bizning sayt:   🔗 <a href='https://hayatmed.uz/uz/'> Hayat Medical Center</a>`,
+            {
+                parse_mode: 'HTML',
+                reply_markup: keyboard
+            })
     })
 
     bot.command('info', async (ctx) => {
@@ -14,14 +22,13 @@ Instagram:      🔗 <a href='https://www.instagram.com/hayatmedcentre/'>Havola<
 <b>Hayat Med</b> klinikasidagi  📰<b>yangiliklardan</b> xabardor bo'lishingiz,\n
 Xizmatlar bilan tanishishingiz va  🧪tahlillarning narxlarini bilishingiz,\n
 <b>Eng muhimi</b> topshirgan tahlillaringizni javobini  📂<b>pdf fayl</b> shaklida yuklab olishingiz mumkin!`,
-            { parse_mode: 'HTML' })
+            {
+                parse_mode: 'HTML',
+                reply_markup: keyboard
+            })
     })
 
     bot.command('start', async (ctx) => {
-        const keyboard = new Keyboard()
-            .text("📋 Menyu")
-            .resized()
-
         if (!ctx.chat.first_name) {
             await ctx.reply(
                 `Assalomu alaykum <b>${ctx.chat.username}</b> botimizga xush kelibsiz!\n

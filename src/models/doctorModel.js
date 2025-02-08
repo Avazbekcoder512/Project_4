@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongoosePaginate = require('mongoose-paginate-v2')
 
 const doctorSchema = new mongoose.Schema({
     uz_name: String,
@@ -28,5 +29,7 @@ const doctorSchema = new mongoose.Schema({
     image: String,  
     role: {type: String, default: 'doctor'}
 }, {timestamps: true})
+
+doctorSchema.plugin(mongoosePaginate)
 
 exports.doctorModel = mongoose.model('Doctor', doctorSchema)
