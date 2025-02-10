@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tahlil Natijalari</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            color: white;
+            margin: 0;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+        }
+        button {
+            background: #ffcc00;
+            color: #333;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            cursor: pointer;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #ffdb4d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🔍 Tahlil Natijasini Yuklab Olish</h2>
+        <input type="number" id="orderNumber" placeholder="📑 Order Number" required>
+        <input type="text" id="verificationCode" placeholder="🔑 Verification Code" required>
+        <button onclick="sendDataToBot()">✅ Tasdiqlash</button>
+    </div>
+
+    <script>
+        function sendDataToBot() {
+            const orderNumber = document.getElementById("orderNumber").value;
+            const verificationCode = document.getElementById("verificationCode").value;
+            
+            if (!orderNumber || !verificationCode) {
+                alert("Iltimos, barcha maydonlarni to'ldiring!");
+                return;
+            }
+            
+            const data = { orderNumber, verificationCode };
+            
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.sendData(JSON.stringify(data));
+                window.Telegram.WebApp.close();
+            } else {
+                alert("Telegram Web App xatosi. Iltimos, qayta urinib ko'ring!");
+            }
+        }
+    </script>
+</body>
+</html>

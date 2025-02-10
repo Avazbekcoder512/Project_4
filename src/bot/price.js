@@ -3,7 +3,7 @@ const { sectionModel } = require("../models/sectionModel");
 
 async function sendSections(ctx, chatId, page = 1, messageId) {
     try {
-        const options = { page, limit: 1 }; 
+        const options = { page, limit: 9 }; 
         const result = await sectionModel.paginate({}, options);
         
         if (!result.docs.length) {
@@ -41,45 +41,6 @@ async function sendSections(ctx, chatId, page = 1, messageId) {
 }
 
 exports.priceCallbackQuery = async (ctx) => {
-    try {
-        const options = { page, limit: 9 }; 
-        const result = await sectionModel.paginate({}, options);
-        
-        if (!result.docs.length) {
-            return ctx.reply("⚠️ Hozircha bo'limlar mavjud emas.");
-        }
-
-        let text = `📋 **Bo'limlar ro'yxati (Sahifa ${result.page})**\n\n`;
-        const keyboard = new InlineKeyboard();
-
-        result.docs.forEach((section, index) => {
-            text += `🔹 ${index + 1}. *${section.name}*\n`;
-            keyboard.text(`${index + 1}`, `section_${page}_${index}`);
-            if ((index + 1) % 3 === 0) keyboard.row();
-        });
-
-        if (result.hasPrevPage || result.hasNextPage) keyboard.row();
-        if (result.hasPrevPage) keyboard.text("⬅️ Orqaga", `section_page_${result.prevPage}`);
-        if (result.hasNextPage) keyboard.text("Oldinga ➡️", `section_page_${result.nextPage}`);
-
-        if (messageId) {
-            await ctx.api.editMessageText(chatId, messageId, text, {
-                parse_mode: "Markdown",
-                reply_markup: keyboard,
-            });
-        } else {
-            await ctx.api.sendMessage(chatId, text, {
-                parse_mode: "Markdown",
-                reply_markup: keyboard,
-            });
-        }
-    } catch (error) {
-        console.log(error);
-        ctx.reply('🆘  Serverda xatolik!')
-    }
-}
-
-exports.handleCallbackQuery = async (ctx) => {
     try {
         const chatId = ctx.callbackQuery.message.chat.id;
         const messageId = ctx.callbackQuery.message.message_id;
