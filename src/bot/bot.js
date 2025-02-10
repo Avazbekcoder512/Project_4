@@ -47,10 +47,10 @@ bot.on('message', async (ctx) => {
 
 bot.on("message:web_app_data", async (ctx) => {
     try {
-        let data = JSON.parse(ctx.message.web_app_data.data);
+        const data = JSON.parse(ctx.web_app_data.data); // To‘g‘ri ishlash uchun
         const { orderNumber, verificationCode } = data;
 
-        ctx.reply("⏳ Ma'lumot tekshirilmoqda...");
+        await ctx.reply("⏳ Ma’lumot tekshirilmoqda...");
 
         const response = await axios.get(`https://yourbackend.com/api/download`, {
             params: { orderNumber, verificationCode },
@@ -63,10 +63,11 @@ bot.on("message:web_app_data", async (ctx) => {
                 filename: "tahlil_natijasi.pdf"
             });
         } else {
-            ctx.reply("⚠️ Tahlil natijasi topilmadi!");
+            await ctx.reply("⚠️ Tahlil natijasi topilmadi!");
         }
     } catch (error) {
-        ctx.reply("❌ Xatolik yuz berdi, ma'lumotlar noto‘g‘ri bo‘lishi mumkin!");
+        console.error(error);
+        await ctx.reply("❌ Xatolik yuz berdi, ma'lumotlar noto‘g‘ri bo‘lishi mumkin!");
     }
 });
 
