@@ -47,7 +47,7 @@ bot.on('message', async (ctx) => {
 
 bot.on("message:web_app_data", async (ctx) => {
     try {
-        const data = JSON.parse(ctx.web_app_data.data); // To‘g‘ri ishlash uchun
+        const data = JSON.parse(ctx.web_app_data.data);
         const { orderNumber, verificationCode } = data;
 
         await ctx.reply("⏳ Ma’lumot tekshirilmoqda...");
