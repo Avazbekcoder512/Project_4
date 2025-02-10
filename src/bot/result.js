@@ -1,7 +1,7 @@
 const { InlineKeyboard } = require("grammy");
 
 const keyboard = new InlineKeyboard().webApp(
-    "Web App-ni ochish",
+    "Forma to‘ldirish",
     "https://web-app-orpin-phi.vercel.app/"
   );
 
