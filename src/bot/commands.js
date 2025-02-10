@@ -19,8 +19,7 @@ Bizning sayt:   🔗 <a href='https://hayatmed.uz/uz/'> Hayat Medical Center</a>
     bot.command('info', async (ctx) => {
         await ctx.reply(
             `Bu bot orqali <b>Hayat Med</b> klinikasi  👨‍⚕️<b>shifokorlari</b> haqida ma'lumot olishingiz,\n
-<b>Hayat Med</b> klinikasidagi  📰<b>yangiliklardan</b> xabardor bo'lishingiz,\n
-Xizmatlar bilan tanishishingiz va  🧪tahlillarning narxlarini bilishingiz,\n
+Xizmatlar bilan tanishishingiz va  🧬 tahlillarning narxlarini bilishingiz,\n
 <b>Eng muhimi</b> topshirgan tahlillaringizni javobini  📂<b>pdf fayl</b> shaklida yuklab olishingiz mumkin!`,
             {
                 parse_mode: 'HTML',

@@ -4,10 +4,7 @@ const { doctorModel } = require("../models/doctorModel");
 async function sendDoctors(ctx, chatId, page = 1, messageId) {
     try {
         const options = { page, limit: 9 };
-        const result = await doctorModel.paginate({}, options);
-
-        console.log(result);
-        
+        const result = await doctorModel.paginate({}, options);        
 
         if (!result.docs.length) {
             return ctx.reply("⚠️ Hozircha shifokorlar mavjud emas.");
