@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tahlil Natijalari</title>
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
         body {
             font-family: 'Poppins', sans-serif;
             display: flex;
@@ -13,7 +18,7 @@
             height: 100vh;
             background: linear-gradient(135deg, #007bff, #6610f2);
             color: white;
-            margin: 0;
+            padding: 15px;
         }
         .container {
             background: rgba(255, 255, 255, 0.2);
@@ -22,7 +27,7 @@
             border-radius: 15px;
             box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
             text-align: center;
-            width: 90%;
+            width: 100%;
             max-width: 400px;
         }
         h2 {
@@ -37,6 +42,7 @@
             border-radius: 8px;
             font-size: 16px;
             text-align: center;
+            outline: none;
         }
         button {
             background: #ffcc00;
@@ -52,6 +58,18 @@
         }
         button:hover {
             background: #ffdb4d;
+        }
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+            input, button {
+                font-size: 14px;
+                padding: 10px;
+            }
         }
     </style>
 </head>

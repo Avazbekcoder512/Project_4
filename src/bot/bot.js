@@ -52,7 +52,7 @@ bot.on("message:web_app_data", async (ctx) => {
 
         await ctx.reply("⏳ Ma’lumot tekshirilmoqda...");
 
-        const response = await axios.get(`https://yourbackend.com/api/download`, {
+        const response = await axios.get(`https://project-4-c2ho.onrender.com/download-result`, {
             params: { orderNumber, verificationCode },
             responseType: "arraybuffer",
         });
@@ -70,6 +70,7 @@ bot.on("message:web_app_data", async (ctx) => {
         await ctx.reply("❌ Xatolik yuz berdi, ma'lumotlar noto‘g‘ri bo‘lishi mumkin!");
     }
 });
+
 
 bot.on("callback_query:data", handleCallbackQuery, priceCallbackQuery);
 
