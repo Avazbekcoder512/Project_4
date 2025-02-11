@@ -1,24 +1,33 @@
 const axios = require("axios");
+const fs = require("fs");
+const path = require("path");
 
 exports.Result = async (ctx) => {
     if (!ctx.session) ctx.session = {};
 
     if (!ctx.session.waitingForOrder) {
         ctx.session.waitingForOrder = true;
-        await ctx.reply("📄 Tahlil natijasini olish uchun Order Numberingizni kiriting:");
+        await ctx.reply("📄 Tahlil natijasini olish uchun Order Numberingizni kiriting:", {
+            reply_markup: { force_reply: true },
+        });
         return;
     }
 
     if (!ctx.session.orderNumber) {
+        if (!/^\d+$/.test(ctx.message.text)) {
+            return await ctx.reply("❌ Iltimos, faqat raqam kiriting!");
+        }
+
         ctx.session.orderNumber = ctx.message.text;
-        await ctx.reply("🔑 Endi Verification Code ni kiriting:");
+        await ctx.reply("🔑 Endi Verification Code ni kiriting:", {
+            reply_markup: { force_reply: true },
+        });
         return;
     }
 
     const orderNumber = ctx.session.orderNumber;
     const verificationCode = ctx.message.text;
 
-    // 🔹 Sessiyani tozalash
     ctx.session.waitingForOrder = false;
     ctx.session.orderNumber = null;
 
@@ -29,10 +38,24 @@ exports.Result = async (ctx) => {
         });
 
         if (response.status === 200) {
-            await ctx.reply("✅ Kodlar to‘g‘ri! PDF fayl yuborilmoqda...");
-            await ctx.replyWithDocument(new Uint8Array(response.data), {
+            const pdfFolderPath = "public/pdf";
+            if (!fs.existsSync(pdfFolderPath)) fs.mkdirSync(pdfFolderPath, { recursive: true });
+
+            const pdfPath = `${pdfFolderPath}/result_${orderNumber}.pdf`;
+            fs.writeFileSync(pdfPath, response.data);
+
+            await ctx.reply("✅ Kodlar to‘g‘ri! PDF fayl yuklanmoqda...");
+            await ctx.replyWithDocument({
+                source: pdfPath,
                 filename: "tahlil_natijasi.pdf",
             });
+
+            setTimeout(() => {
+                fs.unlink(pdfPath, (err) => {
+                    if (err) console.log("❌ PDF faylni o‘chirishda xatolik:", err);
+                    else console.log(`🗑️ Fayl o‘chirildi: ${pdfPath}`);
+                });
+            }, 10000);
         } else {
             await ctx.reply("❌ Order Number yoki Verification Code noto‘g‘ri. Qayta urinib ko‘ring.");
         }
