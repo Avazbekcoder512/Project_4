@@ -1,23 +1,21 @@
-const { Bot, session, } = require('grammy')
-const { commands } = require('./commands')
-const { Menyu } = require('./menyu')
-const { Doctors, handleCallbackQuery } = require('./doctors')
-const { Service } = require('./service')
-const { priceCallbackQuery, Sections } = require('./price')
-const { Result } = require('./result')
-const { default: axios } = require('axios')
-require('dotenv').config()
+const { Bot, session } = require('grammy');
+const { commands } = require('./commands');
+const { Menyu } = require('./menyu');
+const { Doctors, handleCallbackQuery } = require('./doctors');
+const { Service } = require('./service');
+const { priceCallbackQuery, Sections } = require('./price');
+const { Result } = require('./result');
+require('dotenv').config();
 
-const bot = new Bot(process.env.BOT_TOKEN)
+const bot = new Bot(process.env.BOT_TOKEN);
 
 bot.api.setMyCommands([
     { command: 'start', description: 'Botni ishga tushirish!' },
     { command: 'info', description: "Bot nima qila olishi haqida ma'lumot!" },
     { command: 'ijtimoiy_tarmoqlar', description: 'Bizni ijtimoiy tarmoqlarda kuzatib boring!' }
-])
+]);
 
-commands(bot)
-
+commands(bot);
 bot.use(session({ initial: () => ({}) }));
 
 bot.on("message:text", async (ctx) => {
@@ -26,7 +24,6 @@ bot.on("message:text", async (ctx) => {
     }
 
     const text = ctx.message.text;
-
     switch (text) {
         case "📋 Menyu":
             await Menyu(ctx);
@@ -51,11 +48,5 @@ bot.on("message:text", async (ctx) => {
 
 bot.on("callback_query:data", handleCallbackQuery, priceCallbackQuery);
 
-exports.runBot = () => {
-    try {
-        bot.start();
-        console.log('Bot ishga tushdi...');
-    } catch (error) {
-        console.log(error);
-    }
-}
+
+module.exports = { bot };
