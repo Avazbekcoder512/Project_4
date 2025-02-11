@@ -47,6 +47,8 @@ bot.on('message', async (ctx) => {
 
 bot.on("message:web_app_data", async (ctx) => {
     try {
+        console.log(ctx.web_app_data);
+        
         const data = JSON.parse(ctx.message.web_app_data.data);
         const { orderNumber, verificationCode } = data;  
         
