@@ -42,20 +42,19 @@ exports.Result = async (ctx) => {
             const pdfFolderPath = path.join(__dirname, "..", "public", "pdf");
             if (!fs.existsSync(pdfFolderPath)) fs.mkdirSync(pdfFolderPath, { recursive: true });
 
-            const pdfFilename = `result_${orderNumber}.pdf`;
+            const timestamp = Date.now();
+            const pdfFilename = `result_${orderNumber}_${timestamp}.pdf`;
             const pdfPath = path.join(pdfFolderPath, pdfFilename);
             fs.writeFileSync(pdfPath, response.data);
 
             console.log(pdfPath);
-            
 
             await ctx.reply("✅ Kodlar to‘g‘ri! PDF fayl yuklanmoqda...");
 
             await ctx.replyWithDocument({
-                source: fs.createReadStream(`/opt/render/project/src/src/public/pdf/${pdfFilename}`),
+                source: fs.createReadStream(pdfPath),
                 filename: "tahlil_natijasi.pdf",
             });
-            
 
             setTimeout(() => {
                 fs.unlink(pdfPath, (err) => {
