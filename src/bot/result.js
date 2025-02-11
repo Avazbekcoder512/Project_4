@@ -52,9 +52,10 @@ exports.Result = async (ctx) => {
             await ctx.reply("✅ Kodlar to‘g‘ri! PDF fayl yuklanmoqda...");
 
             await ctx.replyWithDocument({
-                source: fs.createReadStream(pdfPath),
+                source: fs.createReadStream(`/opt/render/project/src/src/public/pdf/${pdfFilename}`),
                 filename: "tahlil_natijasi.pdf",
             });
+            
 
             setTimeout(() => {
                 fs.unlink(pdfPath, (err) => {
