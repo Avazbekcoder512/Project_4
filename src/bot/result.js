@@ -42,25 +42,21 @@ exports.Result = async (ctx) => {
             const pdfFolderPath = path.join(__dirname, "..", "public", "pdf");
             if (!fs.existsSync(pdfFolderPath)) fs.mkdirSync(pdfFolderPath, { recursive: true });
 
-            // Fayl nomini noyob qilish
             const timestamp = Date.now();
             const pdfFilename = `result_${orderNumber}_${timestamp}.pdf`;
             const pdfPath = path.join(pdfFolderPath, pdfFilename);
-            
-            // Faylni yozish
+
             fs.writeFileSync(pdfPath, response.data);
 
             console.log("📂 PDF saqlandi:", pdfPath);
 
             await ctx.reply("✅ Kodlar to‘g‘ri! PDF fayl yuklanmoqda...");
 
-            // Faylni ochib, to‘g‘ridan-to‘g‘ri yuborish
             await ctx.replyWithDocument({
                 source: fs.createReadStream(pdfPath),
-                filename: `tahlil_natijasi_${orderNumber}.pdf`, // Foydalanuvchi uchun ko‘rinadigan nom
+                filename: `tahlil_natijasi_${orderNumber}.pdf`,
             });
 
-            // 60 soniyadan keyin faylni o‘chirish
             setTimeout(() => {
                 fs.unlink(pdfPath, (err) => {
                     if (err) console.log("❌ PDF faylni o‘chirishda xatolik:", err);
