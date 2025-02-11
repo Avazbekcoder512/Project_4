@@ -32,21 +32,24 @@ exports.Result = async (ctx) => {
     ctx.session.orderNumber = null;
 
     try {
-        const response = await axios.get("https://project-4-c2ho.onrender.com/download-result", {
+        const response = await axios.get("http://localhost:5000/download-result", {
             params: { orderNumber, verificationCode },
             responseType: "arraybuffer",
+            validateStatus: (status) => status < 500
         });
 
         if (response.status === 200) {
-            const pdfFolderPath = "public/pdf";
+            const pdfFolderPath = path.join(__dirname, "..", "public", "pdf");
             if (!fs.existsSync(pdfFolderPath)) fs.mkdirSync(pdfFolderPath, { recursive: true });
 
-            const pdfPath = `${pdfFolderPath}/result_${orderNumber}.pdf`;
+            const pdfFilename = `result_${orderNumber}.pdf`;
+            const pdfPath = path.join(pdfFolderPath, pdfFilename);
             fs.writeFileSync(pdfPath, response.data);
 
             await ctx.reply("✅ Kodlar to‘g‘ri! PDF fayl yuklanmoqda...");
+
             await ctx.replyWithDocument({
-                source: pdfPath,
+                source: fs.createReadStream(pdfPath),
                 filename: "tahlil_natijasi.pdf",
             });
 
@@ -55,12 +58,14 @@ exports.Result = async (ctx) => {
                     if (err) console.log("❌ PDF faylni o‘chirishda xatolik:", err);
                     else console.log(`🗑️ Fayl o‘chirildi: ${pdfPath}`);
                 });
-            }, 10000);
-        } else {
+            }, 60000);
+        } else if (response.status === 404) {
             await ctx.reply("❌ Order Number yoki Verification Code noto‘g‘ri. Qayta urinib ko‘ring.");
+        } else {
+            await ctx.reply("❌ Xatolik yuz berdi. Iltimos, keyinroq urinib ko‘ring.");
         }
     } catch (error) {
-        console.log(error);
-        await ctx.reply("❌ Xatolik yuz berdi. Iltimos, keyinroq urinib ko‘ring.");
+        console.log("❌ Xatolik:", error);
+        await ctx.reply("❌ Server bilan bog‘lanishda xatolik yuz berdi. Iltimos, keyinroq urinib ko‘ring.");
     }
 };
