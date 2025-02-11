@@ -18,16 +18,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser(process.env.COOKIE_PARSER_KEY));
 appRouter(app);
 
-// Webhook callback uchun endpoint
 app.use(`/${process.env.BOT_TOKEN}`, express.json(), (req, res) => {
     bot.handleUpdate(req.body, res);
 });
 
+await bot.api.setWebhook(`${process.env.WEBHOOK_URL}/${process.env.BOT_TOKEN}`);
+    console.log('✅ Webhook o‘rnatildi:', `${process.env.WEBHOOK_URL}/${process.env.BOT_TOKEN}`);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, async () => {
     console.log(`Server is running on Port: ${PORT}... `);
-
-    // Webhook'ni o‘rnatish
-    await bot.api.setWebhook(`${process.env.WEBHOOK_URL}/${process.env.BOT_TOKEN}`);
-    console.log('✅ Webhook o‘rnatildi:', `${process.env.WEBHOOK_URL}/${process.env.BOT_TOKEN}`);
 });
