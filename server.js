@@ -20,6 +20,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use("/pdf", express.static(path.join(__dirname, "public", "pdf")));
 
 // Cookie parserni o'rnatig
 app.use(cookieParser(process.env.COOKIE_PARSER_KEY))

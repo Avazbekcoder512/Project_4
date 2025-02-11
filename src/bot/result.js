@@ -2,6 +2,7 @@ const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 
+const serverUrl = "https://project-4-c2ho.onrender.com";
 exports.Result = async (ctx) => {
     if (!ctx.session) ctx.session = {};
 
@@ -32,7 +33,7 @@ exports.Result = async (ctx) => {
     ctx.session.orderNumber = null;
 
     try {
-        const response = await axios.get("https://project-4-c2ho.onrender.com/download-result", {
+        const response = await axios.get(`${serverUrl}/download-result`, {
             params: { orderNumber, verificationCode },
             responseType: "arraybuffer",
             validateStatus: (status) => status < 500
@@ -50,11 +51,12 @@ exports.Result = async (ctx) => {
 
             console.log("📂 PDF saqlandi:", pdfPath);
 
+            const fileUrl = `${serverUrl}/pdf/${pdfFilename}`;
+
             await ctx.reply("✅ Kodlar to‘g‘ri! PDF fayl yuklanmoqda...");
 
-            await ctx.replyWithDocument({
-                source: fs.createReadStream(pdfPath),
-                filename: `tahlil_natijasi_${orderNumber}.pdf`,
+            await ctx.replyWithDocument(fileUrl, {
+                caption: `📄 Tahlil natijasi: Order #${orderNumber}`,
             });
 
             setTimeout(() => {
