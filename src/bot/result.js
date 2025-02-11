@@ -32,7 +32,7 @@ exports.Result = async (ctx) => {
     ctx.session.orderNumber = null;
 
     try {
-        const response = await axios.get("http://localhost:5000/download-result", {
+        const response = await axios.get("http://https://project-4-c2ho.onrender.com/download-result", {
             params: { orderNumber, verificationCode },
             responseType: "arraybuffer",
             validateStatus: (status) => status < 500
