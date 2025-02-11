@@ -2,7 +2,7 @@ const { InlineKeyboard } = require("grammy");
 
 const keyboard = new InlineKeyboard().webApp(
     "Forma to‘ldirish",
-    "https://web-app-orpin-phi.vercel.app/"
+    "https://webapp-gold-tau.vercel.app/"
   );
 
 exports.Result = async (ctx) => {
