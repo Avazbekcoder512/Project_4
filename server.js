@@ -22,7 +22,7 @@ app.use(`/${process.env.BOT_TOKEN}`, express.json(), (req, res) => {
     bot.handleUpdate(req.body, res);
 });
 
-await bot.api.setWebhook(`${process.env.WEBHOOK_URL}/${process.env.BOT_TOKEN}`);
+bot.api.setWebhook(`${process.env.WEBHOOK_URL}/${process.env.BOT_TOKEN}`);
     console.log('✅ Webhook o‘rnatildi:', `${process.env.WEBHOOK_URL}/${process.env.BOT_TOKEN}`);
 
 const PORT = process.env.PORT || 3000;
