@@ -46,6 +46,9 @@ exports.Result = async (ctx) => {
             const pdfPath = path.join(pdfFolderPath, pdfFilename);
             fs.writeFileSync(pdfPath, response.data);
 
+            console.log(pdfPath);
+            
+
             await ctx.reply("✅ Kodlar to‘g‘ri! PDF fayl yuklanmoqda...");
 
             await ctx.replyWithDocument({
