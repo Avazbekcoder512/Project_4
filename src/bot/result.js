@@ -1,13 +1,18 @@
-const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
+const { createClient } = require("@supabase/supabase-js");
+const axios = require('axios');
+const { Menyu } = require("./menyu");
+require('dotenv').config()
+
+const supabaseUrl = process.env.Supabase_URL;
+const supabaseKey = process.env.Supabase_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 exports.Result = async (ctx) => {
     if (!ctx.session) ctx.session = {};
 
     if (!ctx.session.waitingForOrder) {
         ctx.session.waitingForOrder = true;
-        await ctx.reply("📄 Tahlil natijasini olish uchun Order Numberingizni kiriting:", {
+        await ctx.reply("📄 Tahlil natijasini olish uchun emailingizga yuborilgan Tartib raqamingizni kiriting:", {
             reply_markup: { force_reply: true },
         });
         return;
@@ -19,7 +24,7 @@ exports.Result = async (ctx) => {
         }
 
         ctx.session.orderNumber = ctx.message.text;
-        await ctx.reply("🔑 Endi Verification Code ni kiriting:", {
+        await ctx.reply("🔑 Endi Tasdiqlash kodi ni kiriting:", {
             reply_markup: { force_reply: true },
         });
         return;
@@ -32,36 +37,53 @@ exports.Result = async (ctx) => {
     ctx.session.orderNumber = null;
 
     try {
-        const response = await axios.get("https://project-4-c2ho.onrender.com/download-result", {
+        const response = await axios.get("http://localhost:5000/download-result", {
             params: { orderNumber, verificationCode },
             responseType: "arraybuffer",
             validateStatus: (status) => status < 500
         });
 
         if (response.status === 200) {
-            const pdfFolderPath = path.join(__dirname, "..", "public", "pdf");
-            if (!fs.existsSync(pdfFolderPath)) fs.mkdirSync(pdfFolderPath, { recursive: true });
-
             const timestamp = Date.now();
-            const pdfFilename = `result_${orderNumber}_${timestamp}.pdf`;
-            const pdfPath = path.join(pdfFolderPath, pdfFilename);
+            const pdfFilename = `pdf/result_${orderNumber}_${timestamp}.pdf`;
 
-            fs.writeFileSync(pdfPath, response.data);
+            const { data, error } = await supabase
+                .storage
+                .from("Images")
+                .upload(pdfFilename, response.data, {
+                    contentType: "application/pdf",
+                    cacheControl: "3600",
+                    upsert: true
+                });
 
-            console.log("📂 PDF saqlandi:", pdfPath);
+            if (error) {
+                console.log("❌ Supabase upload error:", error);
+                return await ctx.reply("❌ PDF faylni yuklashda xatolik yuz berdi.");
+            }
+
+            const { data: urlData } = supabase
+                .storage
+                .from("Images")
+                .getPublicUrl(pdfFilename);
+
+            if (!urlData || !urlData.publicUrl) {
+                return await ctx.reply("❌ PDF'ni olishda xatolik yuz berdi.");
+            }
+
+            const publicURL = urlData.publicUrl;
 
             await ctx.reply("✅ Kodlar to‘g‘ri! PDF fayl yuklanmoqda...");
-
-            await ctx.replyWithMediaGroup({
-                source: fs.createReadStream(pdfPath),
-                filename: `tahlil_natijasi_${orderNumber}.pdf`,
+            await ctx.replyWithDocument(publicURL, {
+                caption: `📄 Tahlil natijasi`,
             });
+            await Menyu(ctx)
 
-            setTimeout(() => {
-                fs.unlink(pdfPath, (err) => {
-                    if (err) console.log("❌ PDF faylni o‘chirishda xatolik:", err);
-                    else console.log(`🗑️ Fayl o‘chirildi: ${pdfPath}`);
-                });
+            setTimeout(async () => {
+                const filePath = publicURL.replace(
+                    `${supabase.storageUrl}/object/public/Images/`,
+                    ""
+                  );
+                await supabase.storage.from("Images").remove([filePath]);
             }, 60000);
         } else if (response.status === 404) {
             await ctx.reply("❌ Order Number yoki Verification Code noto‘g‘ri. Qayta urinib ko‘ring.");

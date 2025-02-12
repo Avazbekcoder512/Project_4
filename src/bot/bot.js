@@ -1,25 +1,27 @@
-const { Bot, session, } = require('grammy')
-const { commands } = require('./commands')
-const { Menyu } = require('./menyu')
-const { Doctors, handleCallbackQuery } = require('./doctors')
-const { Service } = require('./service')
-const { priceCallbackQuery, Sections } = require('./price')
-const { Result } = require('./result')
-require('dotenv').config()
+const { Bot, session } = require('grammy');
+const { commands } = require('./commands');
+const { Menyu } = require('./menyu');
+const { Doctors, handleCallbackQuery } = require('./doctors');
+const { Service } = require('./service');
+const { priceCallbackQuery, Sections } = require('./price');
+const { Result } = require('./result');
+require('dotenv').config();
 
-const bot = new Bot(process.env.BOT_TOKEN)
+const bot = new Bot(process.env.BOT_TOKEN);
+
+bot.use(session({ initial: () => ({}) }));
 
 bot.api.setMyCommands([
     { command: 'start', description: 'Botni ishga tushirish!' },
     { command: 'info', description: "Bot nima qila olishi haqida ma'lumot!" },
     { command: 'ijtimoiy_tarmoqlar', description: 'Bizni ijtimoiy tarmoqlarda kuzatib boring!' }
-])
+]);
 
-commands(bot)
-
-bot.use(session({ initial: () => ({}) }));
+commands(bot);
 
 bot.on("message:text", async (ctx) => {
+    ctx.session = ctx.session ?? {};
+
     if (ctx.session.waitingForOrder) {
         return await Result(ctx);
     }
@@ -48,13 +50,15 @@ bot.on("message:text", async (ctx) => {
     }
 });
 
-bot.on("callback_query:data", handleCallbackQuery, priceCallbackQuery);
+bot.on("callback_query:data", async (ctx) => {
+    if (ctx.callbackQuery.data.startsWith("section_") || ctx.callbackQuery.data.startsWith("sheet_") || ctx.callbackQuery.data.startsWith("back_to_sections_")) {
+        await priceCallbackQuery(ctx);
+    } else {
+        await handleCallbackQuery(ctx);
+    }
+});
 
 exports.runBot = () => {
-    try {
-        bot.start();
-        console.log('Bot ishga tushdi...');
-    } catch (error) {
-        console.log(error);
-    }
-}
+    bot.start();
+    console.log('Bot ishga tushdi...');
+};
