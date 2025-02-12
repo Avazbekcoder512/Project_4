@@ -1,16 +1,16 @@
 const { InlineKeyboard } = require("grammy");
 const { sectionModel } = require("../models/sectionModel");
 
-async function sendSections(ctx, chatId, page = 1, messageId) {
+async function sendPrice(ctx, page = 1, editMessage = false) {
     try {
-        const options = { page, limit: 9 }; 
-        const result = await sectionModel.paginate({}, options);
-        
+        const option = { page, limit: 5 };
+        const result = await sectionModel.paginate({}, option);
+
         if (!result.docs.length) {
-            return ctx.reply("⚠️ Hozircha bo'limlar mavjud emas.");
+            return ctx.reply("⚠️ Hozircha shifokorlar mavjud emas.");
         }
 
-        let text = `📋 **Bo'limlar ro'yxati (Sahifa ${result.page})**\n\n`;
+        let text = `🏥 **Bo'limlar ro'yhati (Sahifa ${result.page})**\n\n`;
         const keyboard = new InlineKeyboard();
 
         result.docs.forEach((section, index) => {
@@ -20,68 +20,71 @@ async function sendSections(ctx, chatId, page = 1, messageId) {
         });
 
         if (result.hasPrevPage || result.hasNextPage) keyboard.row();
-        if (result.hasPrevPage) keyboard.text("⬅️ Orqaga", `section_page_${result.prevPage}`);
-        if (result.hasNextPage) keyboard.text("Oldinga ➡️", `section_page_${result.nextPage}`);
+        if (result.hasPrevPage) keyboard.text('⬅️ Oldingi sahifa', `sheet_${result.prevPage}`);
+        if (result.hasNextPage) keyboard.text('Keyingi sahifa ➡️', `sheet_${result.nextPage}`);
 
-        if (messageId) {
+        const chatId = ctx.chat.id;
+        const messageId = ctx.callbackQuery?.message?.message_id;
+
+        if (editMessage && messageId) {
             await ctx.api.editMessageText(chatId, messageId, text, {
-                parse_mode: "Markdown",
+                parse_mode: 'Markdown',
                 reply_markup: keyboard,
             });
         } else {
-            await ctx.api.sendMessage(chatId, text, {
-                parse_mode: "Markdown",
+            await ctx.reply(text, {
+                parse_mode: 'Markdown',
                 reply_markup: keyboard,
             });
         }
     } catch (error) {
         console.log(error);
-        ctx.reply('🆘  Serverda xatolik!')
+        ctx.reply('🆘 Serverda xatolik!');
     }
 }
 
 exports.priceCallbackQuery = async (ctx) => {
     try {
-        const chatId = ctx.callbackQuery.message.chat.id;
-        const messageId = ctx.callbackQuery.message.message_id;
         const data = ctx.callbackQuery.data;
+        const chatId = ctx.chat.id;
+        const messageId = ctx.callbackQuery?.message?.message_id;
 
-        if (data.startsWith("section_page_")) {
-            const page = parseInt(data.split("_")[2]);
-            await sendSections(ctx, chatId, page, messageId);
+        if (data.startsWith('sheet_')) {
+            const page = parseInt(data.split('_')[1]);
+            await sendPrice(ctx, page, messageId);
         } else if (data.startsWith("section_")) {
             const [_, page, index] = data.split("_").map(Number);
-            const options = { page, limit: 9 };
+            const options = { page, limit: 5 };
             const result = await sectionModel.paginate({}, options);
             const section = result.docs[index];
 
             if (section) {
-                const populatedSection = await sectionModel.findById(section._id).populate("analyses");
-                
-                let text = `📋 *${populatedSection.name} bo'limi*\n\n`;
-                populatedSection.analyses.forEach((analysis, idx) => {
-                    text += `🧪 ${idx + 1}. *${analysis.name}* - ${analysis.price} so'm\n`;
+                const populatedSection = await sectionModel.findById(section._id).populate("analysis");
+
+                let text = `📋 *${populatedSection.uz_name} bo‘limidagi xizmatlar:*\n\n`;
+                populatedSection.analysis.forEach((analysis, idx) => {
+                    text += `🔬 ${idx + 1}. *${analysis.name}* - ${analysis.price} so‘m\n`;
                 });
 
-                const keyboard = new InlineKeyboard().text("⬅️ Orqaga", "back_to_sections");
-                
+                const keyboard = new InlineKeyboard().text('⬅️ Orqaga', `back_to_sections_${page}`);
+
                 await ctx.api.editMessageText(chatId, messageId, text, {
                     parse_mode: "Markdown",
-                    reply_markup: keyboard
+                    reply_markup: keyboard,
                 });
             }
-        } else if (data === "back_to_sections") {
-            await sendSections(ctx, chatId, 1, messageId);
+        } else if (data.startsWith('back_to_sections_')) {
+            const page = Number(data.split("_")[1]);        
+            await sendPrice(ctx, page, messageId, true);
         }
-
+        
         await ctx.answerCallbackQuery().catch((err) => console.error("CallbackQuery Error:", err));
     } catch (error) {
-        console.log(error);
-        ctx.reply('🆘  Serverda xatolik!')
+        console.log("Xatolik:", error);
+        ctx.reply('🆘 Serverda xatolik!');
     }
 };
 
 exports.Sections = async (ctx) => {
-    const chatId = ctx.chat.id;
-    await sendSections(ctx, chatId);
+    await sendPrice(ctx, 1);
 };

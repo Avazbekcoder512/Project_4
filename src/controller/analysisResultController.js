@@ -165,7 +165,7 @@ exports.createAnalysisResult = async (req, res) => {
                     font-weight: bold;
                   "
                 >
-                  Buyurtma raqami:
+                  Tartib raqami:
                 </p>
                 <table
                   role="presentation"
@@ -241,12 +241,30 @@ exports.createAnalysisResult = async (req, res) => {
                 >
                   Bu xabar
                   <a
-                    href="https://www.youtube.com/"
+                    href="https://hayatmed.uz/uz/"
                     target="_blank"
                     style="font-weight: 700; color: red; text-decoration: none"
                     >Hayat Med</a
                   >
                   tomonidan yuborildi.
+                </p>
+
+                 <p
+                  style="
+                    font-size: 14px;
+                    text-align: center;
+                    margin-top: 20px;
+                    color: #555;
+                  "
+                >
+                  Tahil natijangizni quyidagi
+                  <a
+                    href="t.me/hayat_telegram_bot"
+                    target="_blank"
+                    style="font-weight: 700; color: red; text-decoration: none"
+                    >Telegram bot</a
+                  >
+                  dan yuklab olishingiz mumkin
                 </p>
               </td>
             </tr>
@@ -262,7 +280,6 @@ exports.createAnalysisResult = async (req, res) => {
             `,
         };
 
-        // Email yuborish
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.log("Xatolik yuz berdi:", error);
@@ -349,14 +366,12 @@ exports.updateAnalysisResult = async (req, res) => {
             params: { id },
         } = req;
 
-        // Checking id to valid.
         if (!id.match(/^[0-9a-fA-F]{24}$/)) {
             return res.status(400).send({
                 error: "ID haqiqiy emas!",
             });
         }
 
-        // Authorization headerdan tokenni olish
         const authHeader = req.headers["authorization"];
         if (!authHeader) {
             return res.status(404).send({
@@ -364,7 +379,7 @@ exports.updateAnalysisResult = async (req, res) => {
             });
         }
 
-        const token = authHeader.split(" ")[1]; // "Bearer <token>" formatidan tokenni ajratish
+        const token = authHeader.split(" ")[1];
         if (!token) {
             return res.status(404).send({
                 error: "Token not provided",
@@ -491,7 +506,7 @@ exports.updateAnalysisResult = async (req, res) => {
                         font-weight: bold;
                     "
                     >
-                    Buyurtma raqami:
+                    Tartib raqami:
                     </p>
                     <table
                     role="presentation"
@@ -567,13 +582,31 @@ exports.updateAnalysisResult = async (req, res) => {
                     >
                     Bu xabar
                     <a
-                        href="https://www.youtube.com/"
+                        href="https://hayatmed.uz/uz/"
                         target="_blank"
                         style="font-weight: 700; color: red; text-decoration: none"
                         >Hayat Med</a
                     >
                     tomonidan yuborildi.
                     </p>
+
+                    <p
+                  style="
+                    font-size: 14px;
+                    text-align: center;
+                    margin-top: 20px;
+                    color: #555;
+                  "
+                >
+                  Tahil natijangizni quyidagi
+                  <a
+                    href="t.me/hayat_telegram_bot"
+                    target="_blank"
+                    style="font-weight: 700; color: red; text-decoration: none"
+                    >Telegram bot</a
+                  >
+                  dan yuklab olishingiz mumkin
+                </p>
                 </td>
                 </tr>
             </table>
@@ -588,7 +621,6 @@ exports.updateAnalysisResult = async (req, res) => {
                     `,
         };
 
-        // Email yuborish
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.log("Xatolik yuz berdi:", error);
