@@ -32,16 +32,14 @@ Xizmatlar bilan tanishishingiz va  🧬 tahlillarning narxlarini bilishingiz,\n
         if (ctx.chat.first_name == undefined) {
             const user = await userModel.findOne({username: ctx.chat.username})
 
-            if (user) {
-                 console.log('User bor!');
+            if (!user) {
+                const newUser = await userModel.create({
+                    first_name: ctx.chat.first_name,
+                    last_name: ctx.chat.last_name,
+                    username: ctx.chat.username
+                })
             }
 
-            const newUser = await userModel.create({
-                first_name: ctx.chat.first_name,
-                last_name: ctx.chat.last_name,
-                username: ctx.chat.username
-            })
-            
             await ctx.reply(
                 `Assalomu alaykum <b>${ctx.chat.username}</b> botimizga xush kelibsiz!\n
 Botdan to'liq foydalanish uchun <b>Menyu</b> tugmasini bosing!`,
@@ -53,15 +51,14 @@ Botdan to'liq foydalanish uchun <b>Menyu</b> tugmasini bosing!`,
         } else {            
             const user = await userModel.findOne({username: ctx.chat.username})
 
-            if (user) {
-                return console.log('User bor!');
+            if (!user) {
+                const newUser = await userModel.create({
+                    first_name: ctx.chat.first_name,
+                    last_name: ctx.chat.last_name,
+                    username: ctx.chat.username
+                })
             }
-
-            const newUser = await userModel.create({
-                first_name: ctx.chat.first_name,
-                last_name: ctx.chat.last_name,
-                username: ctx.chat.username
-            })
+           
             await ctx.reply(
                 `Assalomu alaykum <b>${ctx.chat.first_name}</b> botimizga xush kelibsiz!\n
 Botdan to'liq foydalanish uchun <b>Menyu</b> tugmasini bosing!`,
