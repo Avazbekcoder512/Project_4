@@ -1,4 +1,5 @@
 const { Keyboard } = require("grammy")
+const { userModel } = require("../models/usersModel")
 
 const keyboard = new Keyboard()
     .text("📋 Menyu")
@@ -29,6 +30,18 @@ Xizmatlar bilan tanishishingiz va  🧬 tahlillarning narxlarini bilishingiz,\n
 
     bot.command('start', async (ctx) => {
         if (!ctx.chat.first_name) {
+            const user = await userModel.findOne({username: ctx.chat.username})
+
+            if (user) {
+                return console.log('User bor!');
+            }
+
+            const newUser = await userModel.create({
+                first_name: ctx.chat.first_name,
+                last_name: ctx.chat.last_name,
+                username: ctx.chat.username
+            })
+            
             await ctx.reply(
                 `Assalomu alaykum <b>${ctx.chat.username}</b> botimizga xush kelibsiz!\n
 Botdan to'liq foydalanish uchun <b>Menyu</b> tugmasini bosing!`,
@@ -37,7 +50,18 @@ Botdan to'liq foydalanish uchun <b>Menyu</b> tugmasini bosing!`,
                     reply_markup: keyboard
                 }
             )
-        } else {
+        } else {            
+            const user = await userModel.findOne({username: ctx.chat.username})
+
+            if (user) {
+                return console.log('User bor!');
+            }
+
+            const newUser = await userModel.create({
+                first_name: ctx.chat.first_name,
+                last_name: ctx.chat.last_name,
+                username: ctx.chat.username
+            })
             await ctx.reply(
                 `Assalomu alaykum <b>${ctx.chat.first_name}</b> botimizga xush kelibsiz!\n
 Botdan to'liq foydalanish uchun <b>Menyu</b> tugmasini bosing!`,
