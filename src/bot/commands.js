@@ -29,11 +29,11 @@ Xizmatlar bilan tanishishingiz va  🧬 tahlillarning narxlarini bilishingiz,\n
     })
 
     bot.command('start', async (ctx) => {
-        if (!ctx.chat.first_name) {
+        if (ctx.chat.first_name == undefined) {
             const user = await userModel.findOne({username: ctx.chat.username})
 
             if (user) {
-                return console.log('User bor!');
+                 console.log('User bor!');
             }
 
             const newUser = await userModel.create({
