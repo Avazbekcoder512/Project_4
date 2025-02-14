@@ -43,6 +43,10 @@ exports.Result = async (ctx) => {
             validateStatus: (status) => status < 500
         });
 
+        if (response.status === 429) {
+            return await ctx.reply("Siz juda ko'p urinish qildingiz! 5 daqiqdan so'ng urinib ko'ring!")
+        }
+
         if (response.status === 200) {
             const timestamp = Date.now();
             const pdfFilename = `pdf/result_${orderNumber}_${timestamp}.pdf`;
