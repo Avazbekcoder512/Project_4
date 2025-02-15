@@ -1,13 +1,13 @@
 const { RateLimiterMemory } = require('rate-limiter-flexible')
 
 const rateLimiter = new RateLimiterMemory({
-    points: 2,
+    points: 3,
     duration: 60,
     blockDuration: 300
 });
 
 exports.limiter = async (req, res, next) => {
-    try {        
+    try {
         await rateLimiter.consume(req.ip)
         next()
     } catch (rateLimiterRes) {
