@@ -1,7 +1,7 @@
 const { InlineKeyboard } = require("grammy");
 const { doctorModel } = require("../models/doctorModel");
 
-async function sendDoctors(ctx, chatId, page = 1, messageId) {
+async function sendUzDoctors(ctx, chatId, page = 1, messageId) {
     try {
         const options = { page, limit: 9 };
         const result = await doctorModel.paginate({}, options);        
@@ -15,7 +15,7 @@ async function sendDoctors(ctx, chatId, page = 1, messageId) {
 
         result.docs.forEach((doctor, index) => {
             text += `🔹 ${index + 1}. *${doctor.uz_name}* - ${doctor.uz_position}\n`;
-            keyboard.text(`${index + 1}`, `doctor_${page}_${index}`);
+            keyboard.text(`${index + 1}`, `uzdoctor_${page}_${index}`);
             if ((index + 1) % 3 === 0) keyboard.row();
         });
 
@@ -40,7 +40,7 @@ async function sendDoctors(ctx, chatId, page = 1, messageId) {
     }
 }
 
-exports.handleCallbackQuery = async (ctx) => {
+exports.uzDoctorsQuery = async (ctx) => {
     try {
         const chatId = ctx.callbackQuery.message.chat.id;
         const messageId = ctx.callbackQuery.message.message_id;
@@ -48,8 +48,8 @@ exports.handleCallbackQuery = async (ctx) => {
 
         if (data.startsWith("page_")) {
             const page = parseInt(data.split("_")[1]);
-            await sendDoctors(ctx, chatId, page, messageId);
-        } else if (data.startsWith("doctor_")) {
+            await sendUzDoctors(ctx, chatId, page, messageId);
+        } else if (data.startsWith("uzdoctor_")) {
             const [_, page, index] = data.split("_").map(Number);
             const options = { page, limit: 9 };
             const result = await doctorModel.paginate({}, options);
@@ -58,7 +58,7 @@ exports.handleCallbackQuery = async (ctx) => {
             if (doctor) {
                 const text = `👨‍⚕ *${doctor.uz_name}*\n📌 *Mutaxassisligi:* ${doctor.uz_position}\n📆 *Tajriba:* ${doctor.uz_experience}\n🏅 *Toifasi:* ${doctor.uz_category}\n📞 *Telefon:* ${doctor.phoneNumber}\n`;
 
-                const keyboard = new InlineKeyboard().text("⬅️ Orqaga", `back_to_doctors_${messageId}`);
+                const keyboard = new InlineKeyboard().text("⬅️ Orqaga", `back_to_uzdoctors_${messageId}`);
 
                 if (doctor.image) {
                     await ctx.api.sendPhoto(chatId, doctor.image, {
@@ -75,11 +75,11 @@ exports.handleCallbackQuery = async (ctx) => {
 
                 await ctx.api.deleteMessage(chatId, messageId);
             }
-        } else if (data.startsWith("back_to_doctors_")) {
+        } else if (data.startsWith("back_to_uzdoctors_")) {
 
             await ctx.api.deleteMessage(chatId, messageId).catch(() => { });
 
-            await sendDoctors(ctx, chatId);
+            await sendUzDoctors(ctx, chatId);
         }
 
         await ctx.answerCallbackQuery().catch((err) => console.error("CallbackQuery Error:", err));
@@ -89,7 +89,7 @@ exports.handleCallbackQuery = async (ctx) => {
     }
 };
 
-exports.Doctors = async (ctx) => {
+exports.uzDoctors = async (ctx) => {
     const chatId = ctx.chat.id;
-    await sendDoctors(ctx, chatId);
+    await sendUzDoctors(ctx, chatId);
 };

@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 
 // Transporter sozlash (Gmail uchun)
 const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
+    host: "smtp.mail.ru",
     port: 587,
     secure: false,
     auth: {
@@ -98,7 +98,7 @@ exports.createAnalysisResult = async (req, res) => {
 
         // HTML email shabloni
         const mailOptions = {
-            from: '"Hayat Med" <avazbekqalandarov03@gmail.com>',
+            from: `"Hayat Med" <${process.env.User_Email}>`,
             to: `${patient.email}`,
             subject: "Tasdiqlash kodi",
             html: `
@@ -439,7 +439,7 @@ exports.updateAnalysisResult = async (req, res) => {
 
         // HTML email shabloni
         const mailOptions = {
-            from: '"Hayat Med" <avazbekqalandarov03@gmail.com>',
+            from: `"Hayat Med" <${process.env.User_Email}>`,
             to: `${patient.email}`,
             subject: "Tasdiqlash kodi",
             html: `

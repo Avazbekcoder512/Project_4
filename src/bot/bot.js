@@ -1,10 +1,12 @@
-const { Bot, session } = require('grammy');
+const { Bot, session, Keyboard } = require('grammy');
 const { commands } = require('./commands');
-const { Menyu } = require('./menyu');
-const { Doctors, handleCallbackQuery } = require('./doctors');
-const { Service } = require('./service');
-const { priceCallbackQuery, Sections } = require('./price');
+const { uzDoctorsQuery } = require('./uzDoctors');
+const { priceCallbackQuery } = require('./price');
 const { Result } = require('./result');
+const { userModel } = require('../models/usersModel');
+const { Menyu } = require('./menu');
+const { ruDoctorsQuery } = require('./ruDoctors');
+const { enDoctorsQuery } = require('./enDoctors');
 require('dotenv').config();
 
 const bot = new Bot(process.env.BOT_TOKEN);
@@ -12,9 +14,10 @@ const bot = new Bot(process.env.BOT_TOKEN);
 bot.use(session({ initial: () => ({}) }));
 
 bot.api.setMyCommands([
-    { command: 'start', description: 'Botni ishga tushirish!' },
-    { command: 'info', description: "Bot nima qila olishi haqida ma'lumot!" },
-    { command: 'ijtimoiy_tarmoqlar', description: 'Bizni ijtimoiy tarmoqlarda kuzatib boring!' }
+    { command: 'start', description: 'Botni ishga tushirish! / Запустите бота! / Launch the bot!' },
+    { command: 'lang', description: "Tilni o'zgartirish! / Изменить язык! / Change language!" },
+    { command: 'info', description: "Bot haqida ma'lumot! / Информация о боте! / Bot information!" },
+    { command: 'social_networks', description: "Bizga obuna bo'ling! / Подпишитесь на нас! / Subscribe to us!" }
 ]);
 
 commands(bot);
@@ -28,37 +31,116 @@ bot.on("message:text", async (ctx) => {
 
     const text = ctx.message.text;
 
-    switch (text) {
-        case "📋 Menyu":
-            await Menyu(ctx);
-            break;
-        case "🧑‍⚕️  Shifokorlar":
-            await Doctors(ctx);
-            break;
-        case "🩺  Xizmatlar":
-            await Service(ctx);
-            break;
-        case "💵  Tahlil narxlari":
-            await Sections(ctx);
-            break;
-        case "🧬  Tahlil natijasi":
-            await Result(ctx);
-            break;
-        default:
-            await ctx.reply("📌 Iltimos, menyudagi tugmalardan foydalaning.");
-            break;
-    }
+    Menyu(text, ctx)
 });
 
-bot.on("callback_query:data", async (ctx) => {
-    if (ctx.callbackQuery.data.startsWith("section_") || ctx.callbackQuery.data.startsWith("sheet_") || ctx.callbackQuery.data.startsWith("back_to_sections_")) {
-        await priceCallbackQuery(ctx);
+bot.callbackQuery(/\bLanguage-(Uzb|Rus|Eng)\b/, async (ctx) => {
+    const user = await userModel.findOne({ chatId: ctx.callbackQuery.from.id })
+
+    await ctx.answerCallbackQuery();
+    await ctx.deleteMessage()
+    if (user) {
+        await userModel.findByIdAndUpdate(user.id, { language: ctx.callbackQuery.data }, { new: true })
+        switch (ctx.callbackQuery.data) {
+            case "Language-Uzb":
+                await ctx.reply(`Botdan to'liq foydalanish uchun <b>📋 Menyu</b> tugmasini bosing!`,
+                    {
+                        parse_mode: 'HTML',
+                        reply_markup: new Keyboard().text("📋 Menyu").resized()
+                    })
+                break;
+            case "Language-Rus":
+                await ctx.reply(`Чтобы в полной мере использовать возможности бота, нажмите кнопку <b>📋 Меню</b>!`,
+                    {
+                        parse_mode: 'HTML',
+                        reply_markup: new Keyboard().text("📋 Меню").resized()
+                    })
+                break;
+            case "Language-Eng":
+                await ctx.reply(`To use the bot to its full potential, press the <b>📋 Menu</b> button!`,
+                    {
+                        parse_mode: 'HTML',
+                        reply_markup: new Keyboard().text("📋 Menu").resized()
+                    })
+                break;
+        }
     } else {
-        await handleCallbackQuery(ctx);
+        if (ctx.callbackQuery.from.first_name === undefined) {
+            switch (ctx.callbackQuery.data) {
+                case "Language-Uzb":
+                    await ctx.reply(`Assalomu alaykum <b>${ctx.callbackQuery.from.username}</b> botimizga xush kelibsiz!\n
+Botdan to'liq foydalanish uchun <b>📋 Menyu</b> tugmasini bosing!`,
+                        {
+                            parse_mode: 'HTML',
+                            reply_markup: new Keyboard().text("📋 Menyu").resized()
+                        })
+                    break;
+                case "Language-Rus":
+                    await ctx.reply(`Здравствуйте, добро пожаловать в наш <b>${ctx.callbackQuery.from.username}</b> бот!\n
+Чтобы в полной мере использовать возможности бота, нажмите кнопку <b>📋 Меню</b>!`,
+                        {
+                            parse_mode: 'HTML',
+                            reply_markup: new Keyboard().text("📋 Меню").resized()
+                        })
+                    break;
+                case "Language-Eng":
+                    await ctx.reply(`Hello <b>${ctx.callbackQuery.from.username}</b>, welcome to our bot!\n
+To use the bot to its full potential, press the <b>📋 Menu</b> button!`,
+                        {
+                            parse_mode: 'HTML',
+                            reply_markup: new Keyboard().text("📋 Menu").resized()
+                        })
+                    break;
+            }
+        } else {
+            switch (ctx.callbackQuery.data) {
+                case "Language-Uzb":
+                    await ctx.reply(`Assalomu alaykum <b>${ctx.callbackQuery.from.first_name}</b> botimizga xush kelibsiz!\n
+Botdan to'liq foydalanish uchun <b>📋 Menyu</b> tugmasini bosing!`,
+                        {
+                            parse_mode: 'HTML',
+                            reply_markup: new Keyboard().text("📋 Menyu").resized()
+                        })
+                    break;
+                case "Language-Rus":
+                    await ctx.reply(`Здравствуйте, добро пожаловать в наш <b>${ctx.callbackQuery.from.first_name}</b> бот!\n
+Чтобы в полной мере использовать возможности бота, нажмите кнопку <b>📋 Меню</b>!`,
+                        {
+                            parse_mode: 'HTML',
+                            reply_markup: new Keyboard().text("📋 Меню").resized()
+                        })
+                    break;
+                case "Language-Eng":
+                    await ctx.reply(`Hello <b>${ctx.callbackQuery.from.first_name}</b>, welcome to our bot!\n
+To use the bot to its full potential, press the <b>📋 Menu</b> button!`,
+                        {
+                            parse_mode: 'HTML',
+                            reply_markup: new Keyboard().text("📋 Menu").resized()
+                        })
+                    break;
+            }
+        }
     }
+})
+
+bot.on("callback_query", async (ctx) => {
+    const user = await userModel.findOne({chatId: ctx.callbackQuery.from.id})
+
+    if (user.language === "Language-Uzb") {
+        await uzDoctorsQuery(ctx)
+    } else if (user.language === "Language-Rus") {
+        await ruDoctorsQuery(ctx)
+    } else if (user.language === "Language-Eng") {
+        await enDoctorsQuery(ctx)
+    }
+    // if (ctx.callbackQuery.data.startsWith("section_") || ctx.callbackQuery.data.startsWith("sheet_") || ctx.callbackQuery.data.startsWith("back_to_sections_")) {
+    //     await priceCallbackQuery(ctx);
+    // } else {
+    //     await handleCallbackQuery(ctx);
+    // }
 });
 
 exports.runBot = () => {
     bot.start();
     console.log('Bot ishga tushdi...');
-};
+};  
