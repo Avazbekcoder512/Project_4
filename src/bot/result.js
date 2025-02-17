@@ -1,6 +1,6 @@
 const { createClient } = require("@supabase/supabase-js");
 const axios = require('axios');
-const { Menyu } = require("./menyu");
+const { Menyu } = require("./menyuKeyboard");
 require('dotenv').config()
 
 const supabaseUrl = process.env.Supabase_URL;
@@ -86,7 +86,7 @@ exports.Result = async (ctx) => {
                 const filePath = publicURL.replace(
                     `${supabase.storageUrl}/object/public/Images/`,
                     ""
-                  );
+                );
                 await supabase.storage.from("Images").remove([filePath]);
             }, 60000);
         } else if (response.status === 404) {
