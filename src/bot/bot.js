@@ -145,11 +145,6 @@ bot.on("callback_query", async (ctx) => {
         await enDoctorsQuery(ctx)
         await enPriceQuery(ctx)
     }
-    // if (ctx.callbackQuery.data.startsWith("section_") || ctx.callbackQuery.data.startsWith("sheet_") || ctx.callbackQuery.data.startsWith("back_to_sections_")) {
-    //     await priceCallbackQuery(ctx);
-    // } else {
-    //     await handleCallbackQuery(ctx);
-    // }
 });
 
 exports.runBot = () => {
