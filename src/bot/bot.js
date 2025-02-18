@@ -1,12 +1,16 @@
 const { Bot, session, Keyboard } = require('grammy');
 const { commands } = require('./commands');
-const { uzDoctorsQuery } = require('./uzDoctors');
-const { priceCallbackQuery } = require('./price');
-const { Result } = require('./result');
+const { uzDoctorsQuery } = require('./doctors/uzDoctors');
+const { uzResult } = require('./result/uzResult');
 const { userModel } = require('../models/usersModel');
 const { Menyu } = require('./menu');
-const { ruDoctorsQuery } = require('./ruDoctors');
-const { enDoctorsQuery } = require('./enDoctors');
+const { ruDoctorsQuery } = require('./doctors/ruDoctors');
+const { enDoctorsQuery } = require('./doctors/enDoctors');
+const { uzPriceQuery } = require('./price/uzPrice');
+const { ruPriceQuery } = require('./price/ruPrice');
+const { enPriceQuery } = require('./price/enPrice');
+const { ruResult } = require('./result/ruResult');
+const { enResult } = require('./result/enResult');
 require('dotenv').config();
 
 const bot = new Bot(process.env.BOT_TOKEN);
@@ -23,10 +27,14 @@ bot.api.setMyCommands([
 commands(bot);
 
 bot.on("message:text", async (ctx) => {
+    const user = await userModel.findOne({chatId: ctx.chat.id})
     ctx.session = ctx.session ?? {};
-
-    if (ctx.session.waitingForOrder) {
-        return await Result(ctx);
+    if (user.language === "Language-Uzb" && ctx.session.waitingForOrder) {
+        return await uzResult(ctx);
+    } else if (user.language === "Language-Rus" && ctx.session.waitingForOrder) {
+        return await ruResult(ctx)
+    } else if (user.language === "Language-Eng" && ctx.session.waitingForOrder) {
+        return await enResult(ctx)
     }
 
     const text = ctx.message.text;
@@ -124,14 +132,17 @@ To use the bot to its full potential, press the <b>📋 Menu</b> button!`,
 })
 
 bot.on("callback_query", async (ctx) => {
-    const user = await userModel.findOne({chatId: ctx.callbackQuery.from.id})
+    const user = await userModel.findOne({ chatId: ctx.callbackQuery.from.id })
 
     if (user.language === "Language-Uzb") {
         await uzDoctorsQuery(ctx)
+        await uzPriceQuery(ctx)
     } else if (user.language === "Language-Rus") {
         await ruDoctorsQuery(ctx)
+        await ruPriceQuery(ctx)
     } else if (user.language === "Language-Eng") {
         await enDoctorsQuery(ctx)
+        await enPriceQuery(ctx)
     }
     // if (ctx.callbackQuery.data.startsWith("section_") || ctx.callbackQuery.data.startsWith("sheet_") || ctx.callbackQuery.data.startsWith("back_to_sections_")) {
     //     await priceCallbackQuery(ctx);

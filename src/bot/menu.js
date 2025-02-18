@@ -1,7 +1,16 @@
-const { enDoctors } = require("./enDoctors");
+const { enDoctors } = require("./doctors/enDoctors");
+const { enSections } = require("./price/enPrice");
+const { enService } = require("./service/enService");
 const { uzMenyu, ruMenyu, enMenyu } = require("./menyuKeyboard");
-const { ruDoctors } = require("./ruDoctors");
-const { uzDoctors } = require("./uzDoctors");
+const { ruDoctors } = require("./doctors/ruDoctors");
+const { ruSections } = require("./price/ruPrice");
+const { ruService } = require("./service/ruService");
+const { uzDoctors } = require("./doctors/uzDoctors");
+const { uzSections } = require("./price/uzPrice");
+const { uzService } = require("./service/uzService");
+const { uzResult } = require("./result/uzResult");
+const { ruResult } = require("./result/ruResult");
+const { enResult } = require("./result/enResult");
 
 exports.Menyu = async (text, ctx) => {
     switch (text) {
@@ -24,13 +33,31 @@ exports.Menyu = async (text, ctx) => {
             await enDoctors(ctx);
             break;
         case "🩺  Xizmatlar":
-            await Service(ctx);
+            await uzService(ctx);
+            break;
+        case "🩺  Услуги":
+            await ruService(ctx);
+            break;
+        case "🩺  Services":
+            await enService(ctx);
             break;
         case "💵  Tahlil narxlari":
-            await Sections(ctx);
+            await uzSections(ctx);
+            break;
+        case "💵  Анализ цен":
+            await ruSections(ctx);
+            break;
+        case "💵  Analysis prices":
+            await enSections(ctx);
             break;
         case "🧬  Tahlil natijasi":
-            await Result(ctx);
+            await uzResult(ctx);
+            break;
+        case "🧬  Результат анализа":
+            await ruResult(ctx);
+            break;
+        case "🧬  Analysis result":
+            await enResult(ctx);
             break;
         default:
             await ctx.reply("📌 Iltimos, menyudagi tugmalardan foydalaning.");

@@ -1,5 +1,5 @@
 const { InlineKeyboard } = require("grammy");
-const { doctorModel } = require("../models/doctorModel");
+const { doctorModel } = require("../../models/doctorModel");
 
 async function sendUzDoctors(ctx, chatId, page = 1, messageId) {
     try {
