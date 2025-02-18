@@ -47,7 +47,7 @@ bot.callbackQuery(/\bLanguage-(Uzb|Rus|Eng)\b/, async (ctx) => {
 
     await ctx.answerCallbackQuery();
     await ctx.deleteMessage()
-    if (user) {
+    if (user.language) {
         await userModel.findByIdAndUpdate(user.id, { language: ctx.callbackQuery.data }, { new: true })
         switch (ctx.callbackQuery.data) {
             case "Language-Uzb":
@@ -73,6 +73,7 @@ bot.callbackQuery(/\bLanguage-(Uzb|Rus|Eng)\b/, async (ctx) => {
                 break;
         }
     } else {
+        await userModel.findByIdAndUpdate(user.id, { language: ctx.callbackQuery.data }, { new: true })
         if (ctx.callbackQuery.from.first_name === undefined) {
             switch (ctx.callbackQuery.data) {
                 case "Language-Uzb":

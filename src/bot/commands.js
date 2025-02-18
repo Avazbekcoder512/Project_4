@@ -44,8 +44,7 @@ exports.commands = async (bot) => {
                 chatId: ctx.chat.id,
                 first_name: ctx.chat.first_name,
                 last_name: ctx.chat.last_name,
-                username: ctx.chat.username,
-                language: ""
+                username: ctx.chat.username
             })
 
             await ctx.reply(`
