@@ -7,27 +7,63 @@ const langKeyboard = new InlineKeyboard()
     .text('🇬🇧 English language', "Language-Eng")
 
 exports.commands = async (bot) => {
-//     bot.command('social_networks', async (ctx) => {
-//         await ctx.reply(
-//             `Telegram:      🔗 <a href='https://t.me/HAYAT_Medical_Centre'>Havola</a>\n
-// Instagram:      🔗 <a href='https://www.instagram.com/hayatmedcentre/'>Havola</a>\n
-// Bizning sayt:   🔗 <a href='https://hayatmed.uz/uz/'> Hayat Medical Center</a>`,
-//             {
-//                 parse_mode: 'HTML',
-//                 // reply_markup: keyboard
-//             })
-//     })
+    bot.command('social_networks', async (ctx) => {
+        const user = await userModel.findOne({ chatId: ctx.chat.id })
+        if (user.language === "Language-Uzb") {
+            await ctx.reply(
+                `Telegram:      🔗 <a href='https://t.me/HAYAT_Medical_Centre'>Havola</a>\n
+Instagram:      🔗 <a href='https://www.instagram.com/hayatmedcentre/'>Havola</a>\n
+Bizning sayt:   🔗 <a href='https://hayatmed.uz/uz/'> Hayat Medical Center</a>`,
+                {
+                    parse_mode: 'HTML',
+                })
+        } else if (user.language === "Language-Rus") {
+            await ctx.reply(
+                `Telegram: 🔗 <a href='https://t.me/HAYAT_Medical_Centre'>Ссылка</a>\n
+Instagram: 🔗 <a href='https://www.instagram.com/hayatmedcentre/'>Ссылка</a>\n
+Наш сайт: 🔗 <a href='https://hayatmed.uz/uz/'> Медицинский центр Хаят</a>`,
+                {
+                    parse_mode: 'HTML',
+                })
+        } else if (user.language === "Language-Eng") {
+            await ctx.reply(
+                `Telegram: 🔗 <a href='https://t.me/HAYAT_Medical_Centre'>Link</a>\n
+Instagram: 🔗 <a href='https://www.instagram.com/hayatmedcentre/'>Link</a>\n
+Our site: 🔗 <a href='https://hayatmed.uz/uz/'> Hayat Medical Center</a>`,
+                {
+                    parse_mode: 'HTML',
+                })
+        }
+    })
 
-//     bot.command('info', async (ctx) => {
-//         await ctx.reply(
-//             `Bu bot orqali <b>Hayat Med</b> klinikasi  👨‍⚕️<b>shifokorlari</b> haqida ma'lumot olishingiz,\n
-// Xizmatlar bilan tanishishingiz va  🧬 tahlillarning narxlarini bilishingiz,\n
-// <b>Eng muhimi</b> topshirgan tahlillaringizni javobini  📂<b>pdf fayl</b> shaklida yuklab olishingiz mumkin!`,
-//             {
-//                 parse_mode: 'HTML',
-//                 // reply_markup: keyboard
-//             })
-//     })
+    bot.command('info', async (ctx) => {
+        const user = await userModel.findOne({ chatId: ctx.chat.id })
+        if (user.language === "Language-Uzb") {
+            await ctx.reply(
+                `Bu bot orqali <b>Hayat Med</b> klinikasi  👨‍⚕️<b>shifokorlari</b> haqida ma'lumot olishingiz,\n
+Xizmatlar bilan tanishishingiz va  🧬 tahlillarning narxlarini bilishingiz,\n
+<b>Eng muhimi</b> topshirgan tahlillaringizni javobini  📂<b>pdf fayl</b> shaklida yuklab olishingiz mumkin!`,
+            {
+                parse_mode: 'HTML',
+            })
+        } else if (user.language === "Language-Rus") {
+            await ctx.reply(
+                `С помощью этого бота вы можете получить информацию о врачах клиники <b>Hayat Med</b> 👨‍⚕️,\n
+Ознакомьтесь с услугами и 🧬 ценами на анализы,\n
+<b>Самое главное</b>, вы можете загрузить ответы на отправленные вами анализы в виде 📂<b>pdf-файла</b>!`,
+            {
+                parse_mode: 'HTML',
+            })
+        } else if (user.language === "Language-Eng") {
+            await ctx.reply(
+                `With this bot, you can get information about the <b>Hayat Med</b> clinic 👨‍⚕️<b>doctors</b>,\n
+Get acquainted with the services and 🧬 know the prices of the tests,\n
+<b>Most importantly</b> you can download the results of your tests in the form of a 📂<b>pdf file</b>!`,
+            {
+                parse_mode: 'HTML',
+            })
+        }
+    })
 
     bot.command('lang', async (ctx) => {
         await ctx.reply(`

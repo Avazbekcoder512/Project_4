@@ -15,13 +15,13 @@ async function sendEnPrice(ctx, page = 1, editMessage = false) {
 
         result.docs.forEach((section, index) => {
             text += `🔹 ${index + 1}. *${section.en_name}*\n`;
-            keyboard.text(`${index + 1}`, `en_section_${page}_${index}`);
+            keyboard.text(`${index + 1}`, `section_${page}_${index}`);
             if ((index + 1) % 3 === 0) keyboard.row();
         });
 
         if (result.hasPrevPage || result.hasNextPage) keyboard.row();
-        if (result.hasPrevPage) keyboard.text('⬅️ Previous page', `en_sheet_${result.prevPage}`);
-        if (result.hasNextPage) keyboard.text('Next page ➡️', `en_sheet_${result.nextPage}`);
+        if (result.hasPrevPage) keyboard.text('⬅️ Previous page', `sheet_${result.prevPage}`);
+        if (result.hasNextPage) keyboard.text('Next page ➡️', `sheet_${result.nextPage}`);
 
         const chatId = ctx.chat.id;
         const messageId = ctx.callbackQuery?.message?.message_id;
@@ -49,10 +49,10 @@ exports.enPriceQuery = async (ctx) => {
         const chatId = ctx.chat.id;
         const messageId = ctx.callbackQuery?.message?.message_id;
 
-        if (data.startsWith('en_sheet_')) {
+        if (data.startsWith('sheet_')) {
             const page = parseInt(data.split('_')[1]);
             await sendEnPrice(ctx, page, messageId);
-        } else if (data.startsWith("en_section_")) {
+        } else if (data.startsWith("section_")) {
             const [_, page, index] = data.split("_").map(Number);
             const options = { page, limit: 5 };
             const result = await sectionModel.paginate({}, options);
@@ -66,14 +66,14 @@ exports.enPriceQuery = async (ctx) => {
                     text += `🔬 ${idx + 1}. *${analysis.name}* - ${analysis.price} so‘m\n`;
                 });
 
-                const keyboard = new InlineKeyboard().text('⬅️ Back', `back_to_en_sections_${page}`);
+                const keyboard = new InlineKeyboard().text('⬅️ Back', `back_to_sections_${page}`);
 
                 await ctx.api.editMessageText(chatId, messageId, text, {
                     parse_mode: "Markdown",
                     reply_markup: keyboard,
                 });
             }
-        } else if (data.startsWith('back_to_en_sections_')) {
+        } else if (data.startsWith('back_to_sections_')) {
             const page = Number(data.split("_")[1]);        
             await sendEnPrice(ctx, page, messageId, true);
         }
