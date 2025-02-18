@@ -91,6 +91,7 @@ exports.uzResult = async (ctx) => {
             }, 60000);
         } else if (response.status === 404) {
             await ctx.reply("❌ Tartib raqami yoki Tasdilash Kodi noto‘g‘ri. Qayta urinib ko‘ring.");
+            await uzMenyu(ctx)
         } else {
             await ctx.reply("❌ Xatolik yuz berdi. Iltimos, keyinroq urinib ko‘ring.");
         }
