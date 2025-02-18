@@ -1,18 +1,18 @@
 const { createClient } = require("@supabase/supabase-js");
 const axios = require('axios');
-const { Menyu } = require("./menyuKeyboard");
+const { enMenyu } = require("../menyuKeyboard");
 require('dotenv').config()
 
 const supabaseUrl = process.env.Supabase_URL;
 const supabaseKey = process.env.Supabase_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-exports.Result = async (ctx) => {
+exports.enResult = async (ctx) => {
     if (!ctx.session) ctx.session = {};
 
     if (!ctx.session.waitingForOrder) {
         ctx.session.waitingForOrder = true;
-        await ctx.reply("📄 Tahlil natijasini olish uchun emailingizga yuborilgan Tartib raqamingizni kiriting:", {
+        await ctx.reply("📄 To receive your test results, enter your Order Number sent to your email:", {
             reply_markup: { force_reply: true },
         });
         return;
@@ -20,11 +20,11 @@ exports.Result = async (ctx) => {
 
     if (!ctx.session.orderNumber) {
         if (!/^\d+$/.test(ctx.message.text)) {
-            return await ctx.reply("❌ Iltimos, faqat raqam kiriting!");
+            return await ctx.reply("❌ Please enter a number only!");
         }
 
         ctx.session.orderNumber = ctx.message.text;
-        await ctx.reply("🔑 Endi Tasdiqlash kodi ni kiriting:", {
+        await ctx.reply("🔑 Now enter the Verification Code:", {
             reply_markup: { force_reply: true },
         });
         return;
@@ -44,7 +44,7 @@ exports.Result = async (ctx) => {
         });
 
         if (response.status === 429) {
-            return await ctx.reply("Siz juda ko'p urinish qildingiz! 5 daqiqdan so'ng urinib ko'ring!")
+            return await ctx.reply("You've tried too many times! Try again in 5 minutes!")
         }
 
         if (response.status === 200) {
@@ -62,7 +62,7 @@ exports.Result = async (ctx) => {
 
             if (error) {
                 console.log("❌ Supabase upload error:", error);
-                return await ctx.reply("❌ PDF faylni yuklashda xatolik yuz berdi.");
+                return await ctx.reply("❌ There was an error loading the PDF file.");
             }
 
             const { data: urlData } = supabase
@@ -71,16 +71,16 @@ exports.Result = async (ctx) => {
                 .getPublicUrl(pdfFilename);
 
             if (!urlData || !urlData.publicUrl) {
-                return await ctx.reply("❌ PDF'ni olishda xatolik yuz berdi.");
+                return await ctx.reply("❌ There was an error retrieving the PDF.");
             }
 
             const publicURL = urlData.publicUrl;
 
-            await ctx.reply("✅ Kodlar to‘g‘ri! PDF fayl yuklanmoqda...");
+            await ctx.reply("✅ The codes are correct! Loading PDF file...");
             await ctx.replyWithDocument(publicURL, {
-                caption: `📄 Tahlil natijasi`,
+                caption: `📄 Analysis result`,
             });
-            await Menyu(ctx)
+            await enMenyu(ctx)
 
             setTimeout(async () => {
                 const filePath = publicURL.replace(
@@ -90,12 +90,12 @@ exports.Result = async (ctx) => {
                 await supabase.storage.from("Images").remove([filePath]);
             }, 60000);
         } else if (response.status === 404) {
-            await ctx.reply("❌ Order Number yoki Verification Code noto‘g‘ri. Qayta urinib ko‘ring.");
+            await ctx.reply("❌ The Order Number or Verification Code is incorrect. Please try again.");
         } else {
-            await ctx.reply("❌ Xatolik yuz berdi. Iltimos, keyinroq urinib ko‘ring.");
+            await ctx.reply("❌ An error occurred. Please try again later.");
         }
     } catch (error) {
         console.log("❌ Xatolik:", error);
-        await ctx.reply("❌ Server bilan bog‘lanishda xatolik yuz berdi. Iltimos, keyinroq urinib ko‘ring.");
+        await ctx.reply("❌ There was an error connecting to the server. Please try again later.");
     }
 };

@@ -1,6 +1,6 @@
-const { serviceModel } = require("../models/serviceModel");
+const { serviceModel } = require("../../models/serviceModel");
 
-exports.Service = async (ctx) => {
+exports.uzService = async (ctx) => {
     try {
         const result = await serviceModel.find();
 
@@ -14,8 +14,9 @@ exports.Service = async (ctx) => {
             text += `🔹 <b>${index + 1}.</b> <b>${service.uz_name}</b> - ${service.uz_title}\n`;
         });
 
-        await ctx.reply(text, { parse_mode: "HTML" });
-
+        await ctx.reply(text, {
+            parse_mode: "HTML" 
+        });
     } catch (error) {
         console.log(error);
         ctx.reply('🆘  Serverda xatolik!');
