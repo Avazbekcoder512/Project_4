@@ -91,6 +91,7 @@ exports.enResult = async (ctx) => {
             }, 60000);
         } else if (response.status === 404) {
             await ctx.reply("❌ The Order Number or Verification Code is incorrect. Please try again.");
+            await enMenyu(ctx)
         } else {
             await ctx.reply("❌ An error occurred. Please try again later.");
         }

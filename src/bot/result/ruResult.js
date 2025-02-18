@@ -91,6 +91,7 @@ exports.ruResult = async (ctx) => {
             }, 60000);
         } else if (response.status === 404) {
             await ctx.reply("❌ Номер заказа или проверочный код неверны. Попробуйте еще раз.");
+            await ruMenyu(ctx)
         } else {
             await ctx.reply("❌ Произошла ошибка. Попробуйте еще раз позже.");
         }
