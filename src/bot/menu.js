@@ -11,6 +11,7 @@ const { uzService } = require("./service/uzService");
 const { uzResult } = require("./result/uzResult");
 const { ruResult } = require("./result/ruResult");
 const { enResult } = require("./result/enResult");
+const { registration } = require("./registration");
 
 exports.Menyu = async (text, ctx) => {
     switch (text) {
@@ -58,6 +59,9 @@ exports.Menyu = async (text, ctx) => {
             break;
         case "🧬  Analysis result":
             await enResult(ctx);
+            break;
+        case "Qabulga yozilish":
+            await registration(ctx);
             break;
         default:
             await ctx.reply("📌 Iltimos, menyudagi tugmalardan foydalaning.");
