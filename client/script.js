@@ -54,10 +54,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     } catch (error) {
         console.error("Ma'lumotlarni yuklashda xatolik:", error);
     }
-    console.log(Telegram.WebApp);
     
     // Formani yuborish
-    document.getElementById("registerForm").addEventListener("submit", (event) => {
+    document.getElementById("registerForm").addEventListener("click", (event) => {
         event.preventDefault();
 
         let formData = {
@@ -76,5 +75,9 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Ma'lumotlarni Telegram botga yuborish
         Telegram.WebApp.sendData(JSON.stringify(formData));
+
+        setTimeout(() => {
+            Telegram.WebApp.close();
+        }, 500);
     });
 });
