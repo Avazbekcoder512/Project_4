@@ -70,6 +70,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         let quarterSelect = document.getElementById("quarter");
         let quarterName = quarterSelect.options[quarterSelect.selectedIndex].text
 
+        let serviceSelect = document.getElementById("service");
+        let serviceName = serviceSelect.options[serviceSelect.selectedIndex].text
+
         let formData = {
             name: document.getElementById("fio").value,
             date_of_birth: document.getElementById("birthdate").value,
@@ -79,7 +82,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             quarter: quarterName,
             street: document.getElementById("street").value,
             house: document.getElementById("house").value,
-            service: document.getElementById("service").value,
+            service: serviceName,
             email: document.getElementById("email").value,
             phoneNomber: document.getElementById("phone").value
         };
