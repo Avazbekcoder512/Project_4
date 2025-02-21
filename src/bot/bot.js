@@ -148,11 +148,18 @@ bot.on("callback_query", async (ctx) => {
 });
 
 bot.on('message:web_app_data', async (ctx) => {
-    const data = JSON.parse(ctx.message.web_app_data.data)
-
-    console.log("Ma'lumotlar:", data);
+    if (!ctx.message?.web_app_data?.data) {
+        return console.log("Ma'lumot kelmadi!");
+    }
     
-})
+    try {
+        const data = JSON.parse(ctx.message.web_app_data.data);
+        console.log("Ma'lumotlar:", data);
+    } catch (error) {
+        console.error("JSON parse xatosi:", error);
+    }
+});
+
 
 exports.runBot = () => {
     bot.start();
