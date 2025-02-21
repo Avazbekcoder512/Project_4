@@ -73,7 +73,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             phone: document.getElementById("phone").value
         };
 
+        // Ma'lumotlarni Telegram botga yuborish
         Telegram.WebApp.sendData(JSON.stringify(formData));
-        document.getElementById("message").classList.remove("hidden");
+
+        // Web App'ni yopish
+        setTimeout(() => {
+            Telegram.WebApp.close();
+        }, 500);
     });
 });
