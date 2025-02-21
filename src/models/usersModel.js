@@ -5,7 +5,7 @@ const userSchema = new mongoose.Schema({
     name: { type: String, default: 'User' },
     username: { type: String, default: 'Username' },
     language: String,
-    province: String,
+    region: String,
     district: String,
     quarter: String,
     street: String,
