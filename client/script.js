@@ -54,11 +54,16 @@ document.addEventListener("DOMContentLoaded", async function () {
     } catch (error) {
         console.error("Ma'lumotlarni yuklashda xatolik:", error);
     }
-    
-    // Formani yuborish
-    document.getElementById("registerForm").addEventListener("click", (event) => {
-        event.preventDefault();
 
+    // Telegram WebApp obyekti
+    const tg = window.Telegram.WebApp;
+
+    // MainButton sozlash
+    tg.MainButton.setText("Jo'natish"); // Tugma matnini o'rnatish
+    tg.MainButton.show(); // Tugmani ko'rsatish
+
+    // MainButton bosilganda ma'lumot yuborish
+    tg.MainButton.onClick(function () {
         let formData = {
             fio: document.getElementById("fio").value,
             birthdate: document.getElementById("birthdate").value,
@@ -73,7 +78,12 @@ document.addEventListener("DOMContentLoaded", async function () {
             phone: document.getElementById("phone").value
         };
 
-        // Ma'lumotlarni Telegram botga yuborish
-        Telegram.WebApp.sendData(JSON.stringify(formData));
+        // Ma'lumotlarni JSON formatda Telegram botga yuborish
+        tg.sendData(JSON.stringify(formData));
+
+        // Web App'ni yopish
+        setTimeout(() => {
+            tg.close();
+        }, 1000);
     });
 });
