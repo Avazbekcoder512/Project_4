@@ -132,18 +132,7 @@ To use the bot to its full potential, press the <b>📋 Menu</b> button!`,
     }
 })
 
-bot.on('message:web_app_data', async (ctx) => {
-    if (!ctx.message?.web_app_data?.data) {
-        return console.log("Ma'lumot kelmadi!");
-    }
-    
-    try {
-        const data = JSON.parse(ctx.message.web_app_data.data);
-        console.log("Ma'lumotlar:", data);
-    } catch (error) {
-        console.error("JSON parse xatosi:", error);
-    }
-});
+
 
 bot.on("callback_query", async (ctx) => {
     const user = await userModel.findOne({ chatId: ctx.callbackQuery.from.id })

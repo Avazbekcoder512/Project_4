@@ -84,7 +84,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             email: document.getElementById("email").value,
             phoneNomber: document.getElementById("phone").value
         };
-            alert(formData.date_of_birth)
         // Ma'lumotlarni Telegram botga JSON formatida yuborish
         tg.sendData(JSON.stringify(formData));
         setTimeout(() => tg.close(), 1000);
