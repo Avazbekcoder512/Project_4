@@ -5,22 +5,18 @@ document.addEventListener("DOMContentLoaded", async function () {
     const serviceSelect = document.getElementById("service");
     const birthdateInput = document.getElementById("birthdate");
 
-    // Tug‘ilgan yilning maksimal sanasini belgilash
     const today = new Date();
     birthdateInput.setAttribute("max", today.toISOString().split("T")[0]);
 
     try {
-        // JSON fayldan viloyat, tuman va mahalla ma'lumotlarini yuklash
         const response = await fetch("regions.json");
         const data = await response.json();
 
-        // Viloyatlarni yuklash
         data.regions.forEach(region => {
             let option = new Option(region.name, region.id);
             regionSelect.appendChild(option);
         });
 
-        // Viloyat tanlanganda tumanlarni chiqarish
         regionSelect.addEventListener("change", function () {
             districtSelect.innerHTML = `<option value="">Tumanni tanlang</option>`;
             quarterSelect.innerHTML = `<option value="">Avval tumanni tanlang</option>`;
@@ -34,7 +30,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             });
         });
 
-        // Tuman tanlanganda mahallalarni chiqarish
         districtSelect.addEventListener("change", function () {
             quarterSelect.innerHTML = `<option value="">Mahallani tanlang</option>`;
 
@@ -47,7 +42,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             });
         });
 
-        // Xizmat turlarini JSON fayldan yuklash
         const serviceResponse = await fetch("services.json");
         const serviceData = await serviceResponse.json();
 
@@ -60,32 +54,36 @@ document.addEventListener("DOMContentLoaded", async function () {
         console.error("Ma'lumotlarni yuklashda xatolik:", error);
     }
 
-    // Telegram WebApp obyekti
     let tg = window.Telegram.WebApp;
 
-    tg.expand(); // WebApp oynasini to'liq ekran qilish
+    tg.expand();
 
-    // MainButton sozlamalari
     tg.MainButton.setText("Yuborish");
-    tg.MainButton.show(); // Tugmani chiqarish
-
-    // MainButton bosilganda ishlaydigan event
+    tg.MainButton.show();
     tg.onEvent("mainButtonClicked", () => {
+        let regionSelect = document.getElementById("region");
+        let regionName = regionSelect.options[regionSelect.selectedIndex].text
+
+        let districtSelect = document.getElementById("district");
+        let districtName = districtSelect.options[districtSelect.selectedIndex].text
+
+        let quarterSelect = document.getElementById("quarter");
+        let quarterName = quarterSelect.options[quarterSelect.selectedIndex].text
+
         let formData = {
             name: document.getElementById("fio").value,
             date_of_birth: document.getElementById("birthdate").value,
             gender: document.getElementById("gender").value,
-            region: document.getElementById("region").value,
-            district: document.getElementById("district").value,
-            quarter: document.getElementById("quarter").value,
+            region: regionName,
+            district: districtName,
+            quarter: quarterName,
             street: document.getElementById("street").value,
             house: document.getElementById("house").value,
             service: document.getElementById("service").value,
             email: document.getElementById("email").value,
             phoneNomber: document.getElementById("phone").value
         };
-        // Ma'lumotlarni Telegram botga JSON formatida yuborish
         tg.sendData(JSON.stringify(formData));
-        setTimeout(() => tg.close(), 1000);
+        tg.close()
     });
 });
