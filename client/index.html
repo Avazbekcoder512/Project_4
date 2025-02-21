@@ -20,7 +20,7 @@
             <div class="form-row">
                 <div class="form-group">
                     <label>Tug‘ilgan yili:</label>
-                    <input type="date" id="birthdate" placeholder="DD.MM.YYYY" required />
+                    <input type="date" id="birthdate" required />
                 </div>
                 <div class="form-group">
                     <label>Jinsi:</label>
@@ -80,12 +80,5 @@
         </form>
     </div>
     <script src="script.js"></script>
-    <script>
-        const today = new Date();
-        const maxYear = today.getFullYear(); 
-        const maxDate = `${maxYear}-12-31`;
-      
-        document.getElementById("birthdate").setAttribute("max", maxDate);
-      </script>
 </body>
 </html>
