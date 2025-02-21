@@ -61,31 +61,36 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     // Telegram WebApp obyekti
-    const tg = window.Telegram.WebApp;
-    tg.expand(); // Web App'ni kengaytirish
+    let tg = window.Telegram.WebApp;
 
-    // MainButton sozlash
-    tg.MainButton.setText("Jo'natish");
-    tg.MainButton.enable();
-    tg.MainButton.show();
-
-    // MainButton bosilganda ma'lumot yuborish
-    tg.MainButton.onClick(function () {
+    tg.expand(); // WebApp oynasini to'liq ekran qilish
+    
+    // MainButton sozlamalari
+    tg.MainButton.text = "Yuborish";
+    tg.MainButton.setText("Yuborish");
+    tg.MainButton.show(); // Tugmani chiqarish
+    
+    // MainButton bosilganda ma'lumotlarni yuborish
+    tg.MainButton.onClick(() => {
         let formData = {
             fio: document.getElementById("fio").value,
-            birthdate: birthdateInput.value,
+            birthdate: document.getElementById("birthdate").value,
             gender: document.getElementById("gender").value,
-            region: regionSelect.options[regionSelect.selectedIndex]?.text || "",
-            district: districtSelect.options[districtSelect.selectedIndex]?.text || "",
-            quarter: quarterSelect.options[quarterSelect.selectedIndex]?.text || "",
+            region: document.getElementById("region").value,
+            district: document.getElementById("district").value,
+            quarter: document.getElementById("quarter").value,
             street: document.getElementById("street").value,
             house: document.getElementById("house").value,
-            service: serviceSelect.options[serviceSelect.selectedIndex]?.text || "",
+            service: document.getElementById("service").value,
             email: document.getElementById("email").value,
             phone: document.getElementById("phone").value
         };
-
+    
+        // Ma'lumotlarni JSON formatda yuborish
         tg.sendData(JSON.stringify(formData));
-        setTimeout(() => tg.close(), 1000);
+    
+        // Tugmani o'chirish
+        tg.MainButton.hide();
     });
+    
 });
