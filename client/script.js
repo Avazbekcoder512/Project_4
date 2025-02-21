@@ -72,8 +72,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     // MainButton bosilganda ishlaydigan event
     tg.onEvent("mainButtonClicked", () => {
         let formData = {
-            fio: document.getElementById("fio").value,
-            birthdate: document.getElementById("birthdate").value,
+            name: document.getElementById("fio").value,
+            date_of_birth: document.getElementById("birthdate").value,
             gender: document.getElementById("gender").value,
             region: document.getElementById("region").value,
             district: document.getElementById("district").value,
@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             house: document.getElementById("house").value,
             service: document.getElementById("service").value,
             email: document.getElementById("email").value,
-            phone: document.getElementById("phone").value
+            phoneNomber: document.getElementById("phone").value
         };
             alert(formData)
         // Ma'lumotlarni Telegram botga JSON formatida yuborish
