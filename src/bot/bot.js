@@ -145,7 +145,6 @@ bot.on('message:web_app_data', async (ctx) => {
     }
 });
 
-
 bot.on("callback_query", async (ctx) => {
     const user = await userModel.findOne({ chatId: ctx.callbackQuery.from.id })
 
