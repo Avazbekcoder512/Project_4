@@ -3,6 +3,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     const districtSelect = document.getElementById("district");
     const quarterSelect = document.getElementById("quarter");
     const serviceSelect = document.getElementById("service");
+    const birthdateInput = document.getElementById("birthdate");
+
+    // Tug‘ilgan yilning maksimal sanasini belgilash
+    const today = new Date();
+    birthdateInput.setAttribute("max", today.toISOString().split("T")[0]);
 
     try {
         // JSON fayldan viloyat, tuman va mahalla ma'lumotlarini yuklash
@@ -57,33 +62,30 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Telegram WebApp obyekti
     const tg = window.Telegram.WebApp;
+    tg.expand(); // Web App'ni kengaytirish
 
     // MainButton sozlash
-    tg.MainButton.setText("Jo'natish"); // Tugma matnini o'rnatish
-    tg.MainButton.show(); // Tugmani ko'rsatish
+    tg.MainButton.setText("Jo'natish");
+    tg.MainButton.enable();
+    tg.MainButton.show();
 
     // MainButton bosilganda ma'lumot yuborish
     tg.MainButton.onClick(function () {
         let formData = {
             fio: document.getElementById("fio").value,
-            birthdate: document.getElementById("birthdate").value,
+            birthdate: birthdateInput.value,
             gender: document.getElementById("gender").value,
-            region: regionSelect.options[regionSelect.selectedIndex].text,
+            region: regionSelect.options[regionSelect.selectedIndex]?.text || "",
             district: districtSelect.options[districtSelect.selectedIndex]?.text || "",
             quarter: quarterSelect.options[quarterSelect.selectedIndex]?.text || "",
             street: document.getElementById("street").value,
             house: document.getElementById("house").value,
-            service: serviceSelect.options[serviceSelect.selectedIndex].text,
+            service: serviceSelect.options[serviceSelect.selectedIndex]?.text || "",
             email: document.getElementById("email").value,
             phone: document.getElementById("phone").value
         };
 
-        // Ma'lumotlarni JSON formatda Telegram botga yuborish
         tg.sendData(JSON.stringify(formData));
-
-        // Web App'ni yopish
-        setTimeout(() => {
-            tg.close();
-        }, 1000);
+        setTimeout(() => tg.close(), 1000);
     });
 });
