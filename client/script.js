@@ -64,14 +64,13 @@ document.addEventListener("DOMContentLoaded", async function () {
     let tg = window.Telegram.WebApp;
 
     tg.expand(); // WebApp oynasini to'liq ekran qilish
-    
+
     // MainButton sozlamalari
-    tg.MainButton.text = "Yuborish";
     tg.MainButton.setText("Yuborish");
     tg.MainButton.show(); // Tugmani chiqarish
-    
-    // MainButton bosilganda ma'lumotlarni yuborish
-    tg.MainButton.onClick(() => {
+
+    // MainButton bosilganda ishlaydigan event
+    tg.onEvent("mainButtonClicked", () => {
         let formData = {
             fio: document.getElementById("fio").value,
             birthdate: document.getElementById("birthdate").value,
@@ -85,12 +84,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             email: document.getElementById("email").value,
             phone: document.getElementById("phone").value
         };
-    
-        // Ma'lumotlarni JSON formatda yuborish
+
+        // Ma'lumotlarni Telegram botga JSON formatida yuborish
         tg.sendData(JSON.stringify(formData));
-    
-        // Tugmani o'chirish
-        tg.MainButton.hide();
+        setTimeout(() => tg.close(), 1000);
     });
-    
 });
