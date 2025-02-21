@@ -75,9 +75,5 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         // Ma'lumotlarni Telegram botga yuborish
         Telegram.WebApp.sendData(JSON.stringify(formData));
-
-        setTimeout(() => {
-            Telegram.WebApp.close();
-        }, 500);
     });
 });
