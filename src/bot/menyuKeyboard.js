@@ -6,7 +6,8 @@ exports.uzMenyu = async (ctx) => {
     .text("🩺  Xizmatlar").row()
     .text("💵  Tahlil narxlari")
     .text("🧬  Tahlil natijasi").row()
-    .text("Qabulga yozilish")
+    .text("📝  Qabulga yozilish")
+    .text("👤  Profile")
     .resized();
    await ctx.reply('Kerakli menyuni tanlang', {
     reply_markup: keyboard
