@@ -133,19 +133,16 @@ To use the bot to its full potential, press the <b>📋 Menu</b> button!`,
 })
 
 bot.on('message:web_app_data', async (ctx) => {
-    if (!ctx.message?.web_app_data?.data) {
-        return console.log("Ma'lumot kelmadi!");
-    }
-    
-    try {
-        const data = JSON.parse(ctx.message.web_app_data.data);
-        console.log("Ma'lumotlar:", data);
+    if (ctx.message.web_app_data) {
+        let data = JSON.parse(ctx.message.web_app_data.data);
+        console.log("Qabul qilingan ma’lumot:", data);
 
-        setTimeout(() => {
-            bot.deleteMessage(msg.chat.id, msg.message_id);
-        }, 1000);
-    } catch (error) {
-        console.error("JSON parse xatosi:", error);
+        await ctx.api.answerWebAppQuery(ctx.message.web_app_data.query_id, {
+            type: "article",
+            id: String(Date.now()),
+            title: "✅ Ma'lumot qabul qilindi",
+            input_message_content: { message_text: "Siz yuborgan ma’lumot qabul qilindi!" }
+        });
     }
 });
 

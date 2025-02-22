@@ -10,8 +10,10 @@ const analysisRouter = require('./analysisRouter')
 const sectionRouter = require('./sectionRouter')
 const analysisResultRouter = require('./analysisResultRouter')
 const resultRouter = require('./resultRouter')
+const userRouter = require('./userRouter')
 
 exports.appRouter = (app) => {
+    app.use('/', userRouter)
     app.use('/', resultRouter)
     
     app.use('/', loginRouter)
