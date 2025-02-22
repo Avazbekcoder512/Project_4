@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const patientSchema = new mongoose.Schema({
     name: String,
-    province: String,
+    region: String,
     district: String,
     quarter: String,
     street: String,

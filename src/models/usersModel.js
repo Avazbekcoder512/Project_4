@@ -15,10 +15,7 @@ const userSchema = new mongoose.Schema({
     phoneNomber: String,
     email: String,
     service: String,
-    orderNumber: Number,
-    verificationCode: String,
     role: {type: String, default: 'user'},
-    analysisResults: [{ type: mongoose.Schema.Types.ObjectId, ref: 'AnalysisResult' }]
 }, { timestamps: true })
 
 exports.userModel = mongoose.model('User', userSchema)
