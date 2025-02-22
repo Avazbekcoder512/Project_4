@@ -60,22 +60,16 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     tg.MainButton.setText("Yuborish");
     tg.MainButton.show();
+
     tg.onEvent("mainButtonClicked", () => {
-        let regionSelect = document.getElementById("region");
-        let regionName = regionSelect.options[regionSelect.selectedIndex].text
-
-        let districtSelect = document.getElementById("district");
-        let districtName = districtSelect.options[districtSelect.selectedIndex].text
-
-        let quarterSelect = document.getElementById("quarter");
-        let quarterName = quarterSelect.options[quarterSelect.selectedIndex].text
-
-        let serviceSelect = document.getElementById("service");
-        let serviceName = serviceSelect.options[serviceSelect.selectedIndex].text
+        let regionName = regionSelect.options[regionSelect.selectedIndex].text;
+        let districtName = districtSelect.options[districtSelect.selectedIndex].text;
+        let quarterName = quarterSelect.options[quarterSelect.selectedIndex].text;
+        let serviceName = serviceSelect.options[serviceSelect.selectedIndex].text;
 
         let formData = {
             name: document.getElementById("fio").value,
-            date_of_birth: document.getElementById("birthdate").value,
+            date_of_birth: formatDate(document.getElementById("birthdate").value),
             gender: document.getElementById("gender").value,
             region: regionName,
             district: districtName,
@@ -86,7 +80,14 @@ document.addEventListener("DOMContentLoaded", async function () {
             email: document.getElementById("email").value,
             phoneNomber: document.getElementById("phone").value
         };
+
         tg.sendData(JSON.stringify(formData));
-        tg.close()
+        tg.close();
     });
+
+    function formatDate(dateString) {
+        if (!dateString) return "";
+        let parts = dateString.split("-");
+        return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    }
 });
