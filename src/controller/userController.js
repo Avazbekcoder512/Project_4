@@ -1,5 +1,4 @@
 const { default: axios } = require("axios");
-const { query } = require("express");
 require('dotenv').config()
 
 
@@ -12,6 +11,8 @@ exports.addUser = async (req, res, bot) => {
             query_id: data.query_id,
             text: `📩 Web App'dan yangi ma'lumot:\n\n${JSON.stringify(data, null, 2)}`
         });
+
+        return res.status(200).send("ok")
 
     } catch (error) {
         console.error("Xatolik:", error);

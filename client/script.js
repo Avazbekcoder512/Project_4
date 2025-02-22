@@ -1,3 +1,5 @@
+const { default: axios } = require("axios");
+
 document.addEventListener("DOMContentLoaded", async function () {
     const regionSelect = document.getElementById("region");
     const districtSelect = document.getElementById("district");
@@ -91,7 +93,6 @@ document.addEventListener("DOMContentLoaded", async function () {
             if (response.status === 200) {
                 console.log("Ma'lumotlar muvaffaqiyatli yuborildi:", response.data);
 
-                // Telegram Web App orqali ma'lumot jo‘natish
                 tg.sendData(JSON.stringify(formData));
                 tg.close();
             } else {
