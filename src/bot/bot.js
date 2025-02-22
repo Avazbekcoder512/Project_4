@@ -140,6 +140,10 @@ bot.on('message:web_app_data', async (ctx) => {
     try {
         const data = JSON.parse(ctx.message.web_app_data.data);
         console.log("Ma'lumotlar:", data);
+
+        setTimeout(() => {
+            bot.deleteMessage(msg.chat.id, msg.message_id);
+        }, 1000);
     } catch (error) {
         console.error("JSON parse xatosi:", error);
     }
