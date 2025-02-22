@@ -1,5 +1,3 @@
-const { default: axios } = require("axios");
-
 document.addEventListener("DOMContentLoaded", async function () {
     const regionSelect = document.getElementById("region");
     const districtSelect = document.getElementById("district");
@@ -62,18 +60,20 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     tg.MainButton.setText("Yuborish");
     tg.MainButton.show();
+    tg.onEvent("mainButtonClicked", () => {
+        let regionSelect = document.getElementById("region");
+        let regionName = regionSelect.options[regionSelect.selectedIndex].text
 
+        let districtSelect = document.getElementById("district");
+        let districtName = districtSelect.options[districtSelect.selectedIndex].text
 
-    tg.onEvent("mainButtonClicked", async () => {
-        let regionName = regionSelect.options[regionSelect.selectedIndex].text;
-        let districtName = districtSelect.options[districtSelect.selectedIndex]?.text || "";
-        let quarterName = quarterSelect.options[quarterSelect.selectedIndex]?.text || "";
-        let serviceName = serviceSelect.options[serviceSelect.selectedIndex].text;
+        let quarterSelect = document.getElementById("quarter");
+        let quarterName = quarterSelect.options[quarterSelect.selectedIndex].text
 
-        const queryId = tg.initDataUnsave.query_id
+        let serviceSelect = document.getElementById("service");
+        let serviceName = serviceSelect.options[serviceSelect.selectedIndex].text
 
         let formData = {
-            query_id: queryId,
             name: document.getElementById("fio").value,
             date_of_birth: document.getElementById("birthdate").value,
             gender: document.getElementById("gender").value,
@@ -84,22 +84,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             house: document.getElementById("house").value,
             service: serviceName,
             email: document.getElementById("email").value,
-            phoneNumber: document.getElementById("phone").value
+            phoneNomber: document.getElementById("phone").value
         };
-
-        try {
-            const response = await axios.post("https://project-4-c2ho.onrender.com/adduser", formData);
-
-            if (response.status === 200) {
-                console.log("Ma'lumotlar muvaffaqiyatli yuborildi:", response.data);
-
-                tg.sendData(JSON.stringify(formData));
-                tg.close();
-            } else {
-                console.error("Serverdan xatolik qaytdi:", response);
-            }
-        } catch (error) {
-            console.error("Ma'lumotlarni yuborishda xatolik:", error);
-        }
+        tg.sendData(JSON.stringify(formData));
+        tg.close()
     });
 });
