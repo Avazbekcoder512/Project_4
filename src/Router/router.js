@@ -13,7 +13,6 @@ const resultRouter = require('./resultRouter')
 const userRouter = require('./userRouter')
 
 exports.appRouter = (app) => {
-    app.use('/', userRouter)
     app.use('/', resultRouter)
     
     app.use('/', loginRouter)
@@ -21,6 +20,7 @@ exports.appRouter = (app) => {
     app.use('/', jwtAccessMiddleware, doctorRouter)
     app.use('/', jwtAccessMiddleware, staffRouter)
     app.use('/', jwtAccessMiddleware, serviceRouter)
+    app.use('/', jwtAccessMiddleware, userRouter)
     app.use('/', jwtAccessMiddleware, newsRouter)
     app.use('/', jwtAccessMiddleware, patientRouter)
     app.use('/', jwtAccessMiddleware, analysisRouter)

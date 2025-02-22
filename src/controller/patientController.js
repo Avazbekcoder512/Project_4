@@ -10,11 +10,11 @@ exports.createPatient = async (req, res) => {
         // error bilan ishlash
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            return res.status(400).send({
-                error: errors.array().map((error) => error.msg),
-            });
+          return res.status(400).send({
+            error: errors.array().map((error) => error.msg),
+          });
         }
-        const data = req.body
+        const data = matchedData(req);
 
         const condidat = await patientModel.findOne({ orderNumber: data.orderNumber })
 

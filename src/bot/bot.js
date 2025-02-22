@@ -27,7 +27,7 @@ bot.api.setMyCommands([
 commands(bot);
 
 bot.on("message:text", async (ctx) => {
-    const user = await userModel.findOne({chatId: ctx.chat.id})
+    const user = await userModel.findOne({ chatId: ctx.chat.id })
     ctx.session = ctx.session ?? {};
     if (user.language === "Language-Uzb" && ctx.session.waitingForOrder) {
         return await uzResult(ctx);
@@ -133,16 +133,33 @@ To use the bot to its full potential, press the <b>📋 Menu</b> button!`,
 })
 
 bot.on('message:web_app_data', async (ctx) => {
-    if (!ctx.message?.web_app_data?.data) {
-        return console.log("Ma'lumot kelmadi!");
-    }
-    
     try {
+        const user = await userModel.findOne({ chatId: ctx.chat.id })
+        if (!ctx.message?.web_app_data?.data) {
+            return console.log("Ma'lumot kelmadi!");
+        }
         const data = JSON.parse(ctx.message.web_app_data.data);
         console.log("Ma'lumotlar:", data);
+        const newUser = {
+            name: data.name,
+            region: data.region,
+            district: data.district,
+            quarter: data.quarter,
+            street: data.street,
+            house: data.house,
+            date_of_birth: data.date_of_birth,
+            gender: data.gender,
+            phoneNomber: data.phoneNomber,
+            email: data.email,
+            service: data.service,
+        }
+
+        await userModel.findByIdAndUpdate(user.id, newUser, { new: true })
+
         await ctx.reply("Ma'lumotlaringiz qabul qilindi!")
     } catch (error) {
         console.error("JSON parse xatosi:", error);
+        ctx.reply("Serverda xatolik!")
     }
 });
 

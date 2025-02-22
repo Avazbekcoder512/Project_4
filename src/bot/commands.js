@@ -78,8 +78,7 @@ Get acquainted with the services and 🧬 know the prices of the tests,\n
         if (!user) {
             const newUser = await userModel.create({
                 chatId: ctx.chat.id,
-                first_name: ctx.chat.first_name,
-                last_name: ctx.chat.last_name,
+                name: ctx.chat.first_name,
                 username: ctx.chat.username
             })
 
