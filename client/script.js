@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             email: document.getElementById("email").value,
             phoneNomber: document.getElementById("phone").value
         };
-        tg.sendData(JSON.stringify(formData));
+        tg.postMessage(JSON.stringify(formData));
         tg.close()
     });
 });
