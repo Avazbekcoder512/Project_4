@@ -10,9 +10,9 @@ exports.createPatient = async (req, res) => {
         // error bilan ishlash
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-          return res.status(400).send({
-            error: errors.array().map((error) => error.msg),
-          });
+            return res.status(400).send({
+                error: errors.array().map((error) => error.msg),
+            });
         }
         const data = matchedData(req);
 
@@ -61,7 +61,7 @@ exports.createPatient = async (req, res) => {
 // Hamma bemorlarni ko'rish
 exports.getAllPatients = async (req, res) => {
     try {
-        const patients = await patientModel.find()
+        const patients = await patientModel.find({ role: "patient" })
 
         if (!patients || patients.length == 0) {
             return res.status(404).send({
@@ -160,6 +160,23 @@ exports.updatedPateint = async (req, res) => {
         if (checkEmail) {
             return res.status(400).send({
                 error: "Bunday emailga ega bemor allaqachon ro'yhatdan o'tgan!"
+            })
+        }
+
+        if (!patient.orderNumber) {
+            const updatedPateint = {
+                name: data.name || patient.name,
+                date_of_birth: data.date_of_birth || patient.date_of_birth,
+                gender: data.gender || patient.gender,
+                email: data.email || patient.email,
+                orderNumber: data.orderNumber
+            }
+
+            await patientModel.findByIdAndUpdate(id, updatedPateint)
+
+            return res.status(200).send({
+                message: "Bemor ma'lumotlari muvaffaqiyatli yangilandi!",
+                updatedPateint
             })
         }
 

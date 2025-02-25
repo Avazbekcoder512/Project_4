@@ -1,7 +1,10 @@
 const mongoose = require('mongoose')
 
 const patientSchema = new mongoose.Schema({
-    name: String,
+    chatId: Number,
+    name: { type: String, default: 'User' },
+    username: { type: String, default: 'Username' },
+    language: String,
     region: String,
     district: String,
     quarter: String,
