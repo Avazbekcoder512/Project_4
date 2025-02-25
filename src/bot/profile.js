@@ -1,8 +1,14 @@
-const { userModel } = require("../models/usersModel");
+const { patientModel } = require("../models/patientModel");
 
 exports.uzProfile = async (ctx) => {
     try {
-        const user = await userModel.findOne({ chatId: ctx.chat.id })
+        const user = await patientModel.findOne({ chatId: ctx.chat.id })
+
+        if (!user) {
+            await ctx.reply(`Iltimos /start tugmasini bosib botni qayta ishga tushiring!,
+Пожалуйста, перезапустите бота, нажав /start!
+Please restart the bot by pressing /start!`)
+        }
 
         if (user.email) {
             await ctx.reply(`

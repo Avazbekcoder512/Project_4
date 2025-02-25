@@ -66,4 +66,7 @@ exports.updatePateintSchema = {
   gender: { isString: { errorMessage: "Gender string bo'lishi kerak!" } },
 
   email: { isEmail: { errorMessage: "Elektron pochta manzili yaroqsiz!" } },
+  orderNumber: {
+    isInt: { errorMessage: "Tartib raqami son bo'lishi kerak!" }
+  },
 };

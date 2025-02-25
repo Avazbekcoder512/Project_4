@@ -2,7 +2,6 @@ const { Bot, session, Keyboard } = require('grammy');
 const { commands } = require('./commands');
 const { uzDoctorsQuery } = require('./doctors/uzDoctors');
 const { uzResult } = require('./result/uzResult');
-const { userModel } = require('../models/usersModel');
 const { Menyu } = require('./menu');
 const { ruDoctorsQuery } = require('./doctors/ruDoctors');
 const { enDoctorsQuery } = require('./doctors/enDoctors');
@@ -11,6 +10,7 @@ const { ruPriceQuery } = require('./price/ruPrice');
 const { enPriceQuery } = require('./price/enPrice');
 const { ruResult } = require('./result/ruResult');
 const { enResult } = require('./result/enResult');
+const { patientModel } = require('../models/patientModel');
 require('dotenv').config();
 
 const bot = new Bot(process.env.BOT_TOKEN);
@@ -27,7 +27,13 @@ bot.api.setMyCommands([
 commands(bot);
 
 bot.on("message:text", async (ctx) => {
-    const user = await userModel.findOne({ chatId: ctx.chat.id })
+    const user = await patientModel.findOne({ chatId: ctx.chat.id })
+    if (!user) {
+        await ctx.reply(`Iltimos /start tugmasini bosib botni qayta ishga tushiring!,
+Пожалуйста, перезапустите бота, нажав /start!
+Please restart the bot by pressing /start!`)
+    }
+
     ctx.session = ctx.session ?? {};
     if (user.language === "Language-Uzb" && ctx.session.waitingForOrder) {
         return await uzResult(ctx);
@@ -43,12 +49,18 @@ bot.on("message:text", async (ctx) => {
 });
 
 bot.callbackQuery(/\bLanguage-(Uzb|Rus|Eng)\b/, async (ctx) => {
-    const user = await userModel.findOne({ chatId: ctx.callbackQuery.from.id })
+    const user = await patientModel.findOne({ chatId: ctx.callbackQuery.from.id })
+
+    if (!user) {
+        await ctx.reply(`Iltimos /start tugmasini bosib botni qayta ishga tushiring!,
+Пожалуйста, перезапустите бота, нажав /start!
+Please restart the bot by pressing /start!`)
+    }
 
     await ctx.answerCallbackQuery();
     await ctx.deleteMessage()
     if (user.language) {
-        await userModel.findByIdAndUpdate(user.id, { language: ctx.callbackQuery.data }, { new: true })
+        await patientModel.findByIdAndUpdate(user.id, { language: ctx.callbackQuery.data }, { new: true })
         switch (ctx.callbackQuery.data) {
             case "Language-Uzb":
                 await ctx.reply(`Botdan to'liq foydalanish uchun <b>📋 Menyu</b> tugmasini bosing!`,
@@ -73,7 +85,7 @@ bot.callbackQuery(/\bLanguage-(Uzb|Rus|Eng)\b/, async (ctx) => {
                 break;
         }
     } else {
-        await userModel.findByIdAndUpdate(user.id, { language: ctx.callbackQuery.data }, { new: true })
+        await patientModel.findByIdAndUpdate(user.id, { language: ctx.callbackQuery.data }, { new: true })
         if (ctx.callbackQuery.from.first_name === undefined) {
             switch (ctx.callbackQuery.data) {
                 case "Language-Uzb":
@@ -134,7 +146,14 @@ To use the bot to its full potential, press the <b>📋 Menu</b> button!`,
 
 bot.on('message:web_app_data', async (ctx) => {
     try {
-        const user = await userModel.findOne({ chatId: ctx.chat.id })
+        const user = await patientModel.findOne({ chatId: ctx.chat.id })
+
+        if (!user) {
+            await ctx.reply(`Iltimos /start tugmasini bosib botni qayta ishga tushiring!,
+Пожалуйста, перезапустите бота, нажав /start!
+Please restart the bot by pressing /start!`)
+        }
+
         if (!ctx.message?.web_app_data?.data) {
             return console.log("Ma'lumot kelmadi!");
         }
@@ -154,7 +173,7 @@ bot.on('message:web_app_data', async (ctx) => {
             service: data.service,
         }
 
-        await userModel.findByIdAndUpdate(user.id, newUser, { new: true })
+        await patientModel.findByIdAndUpdate(user.id, newUser, { new: true })
 
         await ctx.reply("Ma'lumotlaringiz qabul qilindi!")
     } catch (error) {
@@ -164,7 +183,13 @@ bot.on('message:web_app_data', async (ctx) => {
 });
 
 bot.on("callback_query", async (ctx) => {
-    const user = await userModel.findOne({ chatId: ctx.callbackQuery.from.id })
+    const user = await patientModel.findOne({ chatId: ctx.callbackQuery.from.id })
+
+    if (!user) {
+        await ctx.reply(`Iltimos /start tugmasini bosib botni qayta ishga tushiring!,
+Пожалуйста, перезапустите бота, нажав /start!
+Please restart the bot by pressing /start!`)
+    }
 
     if (user.language === "Language-Uzb") {
         await uzDoctorsQuery(ctx)
