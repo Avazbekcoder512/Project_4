@@ -84,6 +84,32 @@ exports.getAllPatients = async (req, res) => {
     }
 }
 
+// Hamma bemorlarni ko'rish
+exports.getAllUaers = async (req, res) => {
+    try {
+        const users = await patientModel.find({ role: "user" })
+
+        if (!users || users.length == 0) {
+            return res.status(404).send({
+                error: "Userlar mavjud emas!"
+            })
+        }
+
+        return res.status(200).send({
+            message: "Userlar ro'yxati!",
+            users
+        })
+    } catch (error) {
+        console.log(error);
+        if (error.message) {
+            return res.status(400).send({
+                error: error.message,
+            });
+        }
+        return res.status(500).send("Serverda xatolik!");
+    }
+}
+
 // Bitta bemorni ko'rish
 exports.getOnePatient = async (req, res) => {
     try {
@@ -169,7 +195,8 @@ exports.updatedPateint = async (req, res) => {
                 date_of_birth: data.date_of_birth || patient.date_of_birth,
                 gender: data.gender || patient.gender,
                 email: data.email || patient.email,
-                orderNumber: data.orderNumber
+                orderNumber: data.orderNumber,
+                role: "patient"
             }
 
             await patientModel.findByIdAndUpdate(id, updatedPateint)
