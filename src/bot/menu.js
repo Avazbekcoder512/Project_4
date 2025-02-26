@@ -67,8 +67,8 @@ exports.Menyu = async (text, ctx) => {
         case "👤  Profile":
             await uzProfile(ctx);
             break;
-        default:
-            await ctx.reply("📌 Iltimos, menyudagi tugmalardan foydalaning.");
-            break;
+        // default:
+        //     await ctx.reply("📌 Iltimos, menyudagi tugmalardan foydalaning.");
+        //     break;
     }
 }
