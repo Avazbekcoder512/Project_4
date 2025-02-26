@@ -1,7 +1,7 @@
 const { checkSchema } = require('express-validator')
 const { roleAccessMiddleware } = require('../middlewares/role-access-middleware')
 const { createPatientSchema, updatePateintSchema } = require('../validators/patientValidate')
-const { createPatient, getAllPatients, getOnePatient, updatedPateint, deletePatient, searchPatient } = require('../controller/patientController')
+const { createPatient, getAllPatients, getOnePatient, updatedPateint, deletePatient, searchPatient, getAllUaers } = require('../controller/patientController')
 
 const router = require('express').Router()
 
@@ -12,5 +12,8 @@ router
 .get('/patient/:id', roleAccessMiddleware('doctor'), getOnePatient)
 .put('/patient/:id/update', roleAccessMiddleware('doctor'), checkSchema(updatePateintSchema), updatedPateint)
 .delete('/patient/:id/delete', roleAccessMiddleware('superAdmin'), deletePatient)
+
+// User router
+.get('/users', roleAccessMiddleware(['doctor', 'registrator']), getAllUaers)
 
 module.exports = router
