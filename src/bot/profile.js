@@ -13,16 +13,15 @@ Please restart the bot by pressing /start!`)
         if (user.email) {
             await ctx.reply(`
                 Sizning ma'lumotlaringiz:\n\n
-<b>Ismingiz:</b> ${user.name}\n\n
+<b>Ism:</b> ${user.name}\n\n
 <b>Foydalanuvchi ismi:</b> @${user.username}\n\n
-<b>Tug'ilgan kuningiz:</b> ${user.date_of_birth}\n\n
-<b>Viloyatingiz:</b> ${user.region}\n\n
-<b>Shahar yoki tumaningiz:</b> ${user.district}\n\n
-<b>Mahallangiz:</b> ${user.district}\n\n
-<b>Ko'changiz:</b> ${user.street}\n\n
-<b>Uy raqamingiz:</b> ${user.house}\n\n
+<b>Tug'ilgan kun:</b> ${user.date_of_birth}\n\n
+<b>Viloyat:</b> ${user.region}\n\n
+<b>Shahar yoki tuman:</b> ${user.district}\n\n
+<b>Mahalla:</b> ${user.quarter}\n\n
+<b>Uy manzili:</b> ${user.address}\n\n
 <b>Emailingiz:</b> ${user.email}\n\n
-<b>Telefon raqamingiz:</b> ${user.phoneNumber}\n\n
+<b>Telefon raqamingiz:</b> ${user.phoneNomber}\n\n
 <b>Tanlagan xizmatingiz:</b> ${user.service}`, {
                 parse_mode: "HTML"
             })
