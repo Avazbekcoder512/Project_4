@@ -12,7 +12,7 @@ const { uzResult } = require("./result/uzResult");
 const { ruResult } = require("./result/ruResult");
 const { enResult } = require("./result/enResult");
 const { registration } = require("./registration");
-const { uzProfile } = require("./profile");
+const { uzProfile, ruProfile, enProfile } = require("./profile");
 
 exports.Menyu = async (text, ctx) => {
     switch (text) {
@@ -64,8 +64,20 @@ exports.Menyu = async (text, ctx) => {
         case "📝  Qabulga yozilish":
             await registration(ctx);
             break;
-        case "👤  Profile":
+        case "📝  Регистрация":
+            await registration(ctx);
+            break;
+        case "📝  Registration":
+            await registration(ctx);
+            break;
+        case "👤  Ma'lumotlarim":
             await uzProfile(ctx);
+            break;
+        case "👤  Моя информация":
+            await ruProfile(ctx);
+            break;
+        case "👤  My information":
+            await enProfile(ctx);
             break;
         // default:
         //     await ctx.reply("📌 Iltimos, menyudagi tugmalardan foydalaning.");

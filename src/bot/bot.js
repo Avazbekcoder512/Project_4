@@ -13,7 +13,9 @@ const { enResult } = require('./result/enResult');
 const { patientModel } = require('../models/patientModel');
 const { askNextStep } = require('./registration');
 require('dotenv').config();
-const fs = require('fs')
+const fs = require('fs');
+const { serviceModel } = require('../models/serviceModel');
+const { uzMenyu } = require('./menyuKeyboard');
 
 const bot = new Bot(process.env.BOT_TOKEN);
 
@@ -101,7 +103,7 @@ Please restart the bot by pressing /start!`)
         user.address = userInput
         user.step = 6
     } else if (user.step === 6) {
-        user.step = 0
+        sendServices(ctx, update = false)
     }
 
     await user.save();
@@ -237,7 +239,7 @@ Please restart the bot by pressing /start!`)
 
 bot.callbackQuery(/^region_(\d+)$/, async (ctx) => {
     const regionId = ctx.match[1];
-    
+
     const userId = ctx.from.id;
     let user = await patientModel.findOne({ chatId: userId });
     if (!user) {
@@ -259,12 +261,15 @@ bot.callbackQuery(/^region_(\d+)$/, async (ctx) => {
     await user.save();
 
     await ctx.answerCallbackQuery();
-    await sendDistricts(ctx, regionId, 0, true);
+    // Xabarni o'chirib tashlaymiz
+    await ctx.deleteMessage();
+    // Yangi xabar sifatida tumanlar ro'yhatini jo'natamiz
+    await sendDistricts(ctx, regionId, 0, false);
 });
 
-async function sendDistricts(ctx, regionId, page, update = false) {    
+async function sendDistricts(ctx, regionId, page, update = false) {
     const districts = data.districts.filter(d => Number(d.region_id) === Number(regionId));
-    
+
     const pageSize = 10;
     const totalPages = Math.ceil(districts.length / pageSize);
     const start = page * pageSize;
@@ -338,9 +343,9 @@ bot.callbackQuery(/^district_(\d+)$/, async (ctx) => {
     user.district = selectedDistrict.name;
     await user.save();
     await ctx.answerCallbackQuery();
-    await sendQuarters(ctx, districtId, 0, true);
+    await ctx.deleteMessage();
+    await sendQuarters(ctx, districtId, 0, false);
 });
-
 
 async function sendQuarters(ctx, districtId, page, update = false) {
     const quarters = data.quarters.filter(m => Number(m.district_id) === Number(districtId));
@@ -411,7 +416,7 @@ bot.callbackQuery(/^quarters_(\d+)$/, async (ctx) => {
     }
 
     user.quarter = selectedQuarter.name;
-    user.step = 5
+    user.step = 6;
     await user.save();
 
     await ctx.answerCallbackQuery();
@@ -421,13 +426,89 @@ bot.callbackQuery(/^quarters_(\d+)$/, async (ctx) => {
 bot.callbackQuery(/^backtodistricts_(\d+)$/, async (ctx) => {
     const regionId = ctx.match[1];
     await ctx.answerCallbackQuery();
-    await sendDistricts(ctx, regionId, 0, true);
+    await ctx.deleteMessage();
+    await sendDistricts(ctx, regionId, 0, false);
+});
+
+async function sendServices(ctx, page, update = false) {
+    let services;
+    try {
+        services = await serviceModel.find({});
+    } catch (err) {
+        console.error("Xizmatlarni olishda xatolik:", err);
+        return await ctx.reply("Xizmatlar ro'yxatini olishda xatolik yuz berdi!");
+    }
+
+    const pageSize = 5;
+    const totalPages = Math.ceil(services.length / pageSize);
+    const start = page * pageSize;
+    const end = start + pageSize;
+    const paginatedServices = services.slice(start, end);
+
+    const servicesKeyboard = new InlineKeyboard();
+    paginatedServices.forEach((service, index) => {
+        if (index % 2 === 0) servicesKeyboard.row();
+        servicesKeyboard.text(service.uz_name, `service_${service._id}`);
+    });
+
+    console.log(servicesKeyboard);
+
+
+    if (services.length > pageSize) {
+        servicesKeyboard.row();
+        if (page > 0) servicesKeyboard.text("⏪ Orqaga", `services_${page - 1}`);
+        if (page < totalPages - 1) servicesKeyboard.text("Keyingi ⏩", `services_${page + 1}`);
+    }
+
+    servicesKeyboard.row();
+
+    const messageText = "Xizmatni tanlang:";
+
+    if (update) {
+        await ctx.editMessageText(messageText, {
+            reply_markup: servicesKeyboard,
+        });
+    } else {
+        await ctx.reply(messageText, {
+            reply_markup: servicesKeyboard,
+        });
+    }
+}
+
+bot.callbackQuery(/^services_(\d+)$/, async (ctx) => {
+    const page = parseInt(ctx.match[1], 10);
+    await ctx.answerCallbackQuery();
+    await sendServices(ctx, page, true);
+});
+
+bot.callbackQuery(/^service_(.+)$/, async (ctx) => {
+    const serviceId = ctx.match[1];
+    const userId = ctx.from.id;
+    let user = await patientModel.findOne({ chatId: userId });
+    if (!user) {
+        return await ctx.answerCallbackQuery({
+            text: "Ma'lumot topilmadi. Iltimos, /start buyrug'ini bosing!",
+            show_alert: true,
+        });
+    }
+    const selectedService = await serviceModel.findOne({ _id: serviceId });
+    if (!selectedService) {
+        return await ctx.answerCallbackQuery({
+            text: "Noto'g'ri xizmat tanlandi!",
+            show_alert: true,
+        });
+    }
+    user.service = selectedService.uz_name;
+    user.step = 0
+    await user.save();
+    await ctx.answerCallbackQuery();
+    await ctx.reply("✅ Ma'lumotlaringiz saqlandi!")
+    uzMenyu(ctx)
 });
 
 
-
 bot.on("callback_query", async (ctx) => {
-    
+
     const user = await patientModel.findOne({ chatId: ctx.callbackQuery.from.id })
 
     if (!user) {
@@ -445,6 +526,16 @@ Please restart the bot by pressing /start!`)
     } else if (user.language === "Language-Eng") {
         await enDoctorsQuery(ctx)
         await enPriceQuery(ctx)
+    }
+
+    if (ctx.callbackQuery.data === "refresh") {
+        if (user.language === "Language-Uzb") {
+            await ctx.reply("Malumotlarni yangilash uchun qabulga yozilish bo'limiga o'tib qayta ma'lumotlaringizni kiriting!")
+        } else if (user.language === "Language-Rus") {
+            await ctx.reply("Чтобы обновить свою информацию, перейдите в раздел регистрации и повторно введите свою информацию!")
+        } else if (user.language === "Language-Eng") {
+            await ctx.reply("To update your information, go to the registration section and re-enter your information!")
+        }
     }
 });
 
