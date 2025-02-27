@@ -19,9 +19,6 @@ exports.askNextStep = async (ctx, user) => {
     } else if (user.step === 4) {
         await ctx.reply("📲 Telefon raqamingizni yuboring buning uchun pastdagi Telefon raqamni yuborish tugmasini bosing!", {
             reply_markup: contactKeyboard});
-    } else if (user.step === 6) {
-        await ctx.reply("✅ Ma'lumotlaringiz saqlandi!")
-        uzMenyu(ctx)
     }
 }
 
@@ -37,7 +34,7 @@ exports.registration = async (ctx) => {
 Please restart the bot by pressing /start!`)
         }
 
-        if (!user.step) {
+        if (!user.step || user.step === 0) {
             user.step = 1
             await user.save()
             return this.askNextStep(ctx, user);
