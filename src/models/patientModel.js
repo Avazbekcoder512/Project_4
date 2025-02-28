@@ -6,6 +6,7 @@ const patientSchema = new mongoose.Schema({
     username: { type: String, default: 'Username' },
     step: Number,
     language: String,
+    action: String,
     region: String,
     district: String,
     quarter: String,

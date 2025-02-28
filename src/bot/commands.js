@@ -93,7 +93,8 @@ Get acquainted with the services and 🧬 know the prices of the tests,\n
                 chatId: ctx.chat.id,
                 name: ctx.chat.first_name,
                 username: ctx.chat.username,
-                role: "user"
+                role: "user",
+                action: "Start"
             })
 
             await ctx.reply(`
@@ -108,22 +109,27 @@ Get acquainted with the services and 🧬 know the prices of the tests,\n
                     {
                         reply_markup: langKeyboard
                     })
-            }
-            if (user.language === "Language-Uzb") {
-                await ctx.reply(`Botdan to'liq foydalanish uchun <b>📋 Menyu</b> tugmasini bosing!`, {
-                    parse_mode: 'HTML',
-                    reply_markup: new Keyboard().text("📋 Menyu").resized()
-                })
-            } else if (user.language === "Language-Rus") {
-                await ctx.reply(`Чтобы в полной мере использовать возможности бота, нажмите кнопку <b>📋 Меню</b>!`, {
-                    parse_mode: 'HTML',
-                    reply_markup: new Keyboard().text("📋 Меню").resized()
-                })
-            } else if (user.language === "Language-Eng") {
-                await ctx.reply(`To use the bot to its full potential, press the <b>📋 Menu</b> button!`, {
-                    parse_mode: 'HTML',
-                    reply_markup: new Keyboard().text("📋 Menu").resized()
-                })
+            } else if (user.action !== "Start") {
+                user.action = "Start"
+                user.step = 0
+                await user.save()
+
+                if (user.language === "Language-Uzb") {
+                    await ctx.reply(`Botdan to'liq foydalanish uchun <b>📋 Menyu</b> tugmasini bosing!`, {
+                        parse_mode: 'HTML',
+                        reply_markup: new Keyboard().text("📋 Menyu").resized()
+                    })
+                } else if (user.language === "Language-Rus") {
+                    await ctx.reply(`Чтобы в полной мере использовать возможности бота, нажмите кнопку <b>📋 Меню</b>!`, {
+                        parse_mode: 'HTML',
+                        reply_markup: new Keyboard().text("📋 Меню").resized()
+                    })
+                } else if (user.language === "Language-Eng") {
+                    await ctx.reply(`To use the bot to its full potential, press the <b>📋 Menu</b> button!`, {
+                        parse_mode: 'HTML',
+                        reply_markup: new Keyboard().text("📋 Menu").resized()
+                    })
+                }
             }
         }
     })

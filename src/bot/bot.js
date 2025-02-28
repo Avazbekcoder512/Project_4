@@ -29,7 +29,7 @@ function isValidEmail(email) {
 }
 
 function isValidDate(dateString) {
-    const dateRegex = /^(0[1-9]|[12][0-9]|3[01]).(0[1-9]|1[0-2]).(\d{4})$/;
+    const dateRegex = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-(\d{4})$/;
 
     if (!dateRegex.test(dateString)) {
         return { valid: false, message: "❌ Tug‘ilgan kunni DD-MM-YYYY formatida kiriting! (Masalan: 15-08-1995)" };
@@ -84,31 +84,33 @@ Please restart the bot by pressing /start!`)
 
     Menyu(text, ctx)
 
-    if (user.step === 1) {
-        user.name = userInput
-        user.step = 2
-    } else if (user.step === 2) {
-        const dataCheck = isValidDate(userInput)
-        if (!dataCheck.valid) {
-            return await ctx.reply(dataCheck.message)
+    if (user.action === "Registration") {
+        if (user.step === 1) {
+            user.name = userInput
+            user.step = 2
+        } else if (user.step === 2) {
+            const dataCheck = isValidDate(userInput)
+            if (!dataCheck.valid) {
+                return await ctx.reply(dataCheck.message)
+            }
+            user.date_of_birth = userInput
+            user.step = 3
+        } else if (user.step === 3) {
+            if (!isValidEmail(userInput)) {
+                return await ctx.reply("❌ Email noto‘g‘ri! Iltimos, qayta kiriting: (masalan: user@example.com)")
+            }
+            user.email = userInput
+            user.step = 4
+        } else if (user.step === 5) {
+            user.address = userInput
+            user.step = 6
+        } else if (user.step === 6) {
+            sendServices(ctx, update = false)
         }
-        user.date_of_birth = userInput
-        user.step = 3
-    } else if (user.step === 3) {
-        if (!isValidEmail(userInput)) {
-            return await ctx.reply("❌ Email noto‘g‘ri! Iltimos, qayta kiriting: (masalan: user@example.com)")
-        }
-        user.email = userInput
-        user.step = 4
-    } else if (user.step === 5) {
-        user.address = userInput
-        user.step = 6
-    } else if (user.step === 6) {
-        sendServices(ctx, update = false)
+    
+        await user.save();
+        await askNextStep(ctx, user);
     }
-
-    await user.save();
-    await askNextStep(ctx, user);
 });
 
 bot.callbackQuery(/\bLanguage-(Uzb|Rus|Eng)\b/, async (ctx) => {
@@ -412,7 +414,8 @@ bot.callbackQuery(/^service_(.+)$/, async (ctx) => {
         });
     }
     user.service = selectedService.uz_name;
-    user.step = 0
+    user.step = 7
+    user.action = "Start"
     await user.save();
     await ctx.answerCallbackQuery();
     if (user.language === "Language-Uzb") {
