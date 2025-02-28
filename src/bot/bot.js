@@ -15,7 +15,8 @@ const { askNextStep } = require('./registration');
 require('dotenv').config();
 const fs = require('fs');
 const { serviceModel } = require('../models/serviceModel');
-const { uzMenyu } = require('./menyuKeyboard');
+const { uzMenyu, ruMenyu, enMenyu } = require('./menyuKeyboard');
+const { sendDistricts, sendServices, sendQuarters } = require('./region/region');
 
 const bot = new Bot(process.env.BOT_TOKEN);
 
@@ -217,12 +218,14 @@ bot.on('message:contact', async (ctx) => {
 Пожалуйста, перезапустите бота, нажав /start!
 Please restart the bot by pressing /start!`)
     }
+    if (user.language === 0) {
 
+    }
     if (!contact) {
         await ctx.reply('Iltimos pastdagi Telefon raqamni yuborish tugmasi orqali yuboring')
     }
 
-    user.phoneNomber = contact.phone_number
+    user.phoneNumber = contact.phone_number
     await user.save()
 
     const regionKeyboards = new InlineKeyboard();
@@ -232,10 +235,50 @@ Please restart the bot by pressing /start!`)
         regionKeyboards.text(region.name, `region_${region.id}`);
     });
 
-    await ctx.reply("🌍 Viloyatingizni tanlang:", {
-        reply_markup: regionKeyboards,
-    });
+    if (user.language === "Language-Uzb") {
+        await ctx.reply("🌍 Viloyatingizni tanlang:", {
+            reply_markup: regionKeyboards,
+        });
+    } else if (user.language === "Language-Rus") {
+        await ctx.reply("🌍 Выберите свой регион:", {
+            reply_markup: regionKeyboards,
+        });
+    } else if (user.language === "Language-Eng") {
+        await ctx.reply("🌍 Select your region:", {
+            reply_markup: regionKeyboards,
+        });
+    }
 })
+
+bot.callbackQuery("regions", async (ctx) => {
+    const user = await patientModel.findOne({ chatId: ctx.callbackQuery.from.id })
+    if (!user) {
+        await ctx.reply(`Iltimos /start tugmasini bosib botni qayta ishga tushiring!,
+Пожалуйста, перезапустите бота, нажав /start!
+Please restart the bot by pressing /start!`)
+    }
+    const regionKeyboard = new InlineKeyboard();
+    data.regions.forEach((region, index) => {
+        if (index % 2 === 0) regionKeyboard.row();
+        regionKeyboard.text(region.name, `region_${region.id}`);
+    });
+    await ctx.answerCallbackQuery();
+
+    if (user.language === "Language-Uzb") {
+        await ctx.editMessageText("🌍 Viloyatingizni tanlang:", {
+            reply_markup: regionKeyboard,
+        });
+    } else if (user.language === "Language-Rus") {
+        await ctx.editMessageText("🌍 Выберите свой регион:", {
+            reply_markup: regionKeyboard,
+        });
+    } else if (user.language === "Language-Eng") {
+        await ctx.editMessageText("🌍 Select your region:", {
+            reply_markup: regionKeyboard,
+        });
+    }
+});
+
 
 bot.callbackQuery(/^region_(\d+)$/, async (ctx) => {
     const regionId = ctx.match[1];
@@ -261,66 +304,15 @@ bot.callbackQuery(/^region_(\d+)$/, async (ctx) => {
     await user.save();
 
     await ctx.answerCallbackQuery();
-    // Xabarni o'chirib tashlaymiz
     await ctx.deleteMessage();
-    // Yangi xabar sifatida tumanlar ro'yhatini jo'natamiz
     await sendDistricts(ctx, regionId, 0, false);
 });
-
-async function sendDistricts(ctx, regionId, page, update = false) {
-    const districts = data.districts.filter(d => Number(d.region_id) === Number(regionId));
-
-    const pageSize = 10;
-    const totalPages = Math.ceil(districts.length / pageSize);
-    const start = page * pageSize;
-    const end = start + pageSize;
-    const paginatedDistricts = districts.slice(start, end);
-
-    const districtKeyboard = new InlineKeyboard();
-    paginatedDistricts.forEach((district, index) => {
-        if (index % 2 === 0) districtKeyboard.row();
-        districtKeyboard.text(district.name, `district_${district.id}`);
-    });
-
-    if (districts.length > pageSize) {
-        districtKeyboard.row();
-        if (page > 0) districtKeyboard.text("⏪ Orqaga", `districts_${regionId}_${page - 1}`);
-        if (page < totalPages - 1) districtKeyboard.text("Keyingi ⏩", `districts_${regionId}_${page + 1}`);
-    }
-
-    districtKeyboard.row();
-    districtKeyboard.text("Viloyatlar", "regions");
-
-    const messageText = "🏙 Shahar yoki Tumanni tanlang:";
-
-    if (update) {
-        await ctx.editMessageText(messageText, {
-            reply_markup: districtKeyboard,
-        });
-    } else {
-        await ctx.reply(messageText, {
-            reply_markup: districtKeyboard,
-        });
-    }
-}
 
 bot.callbackQuery(/^districts_(\d+)_(\d+)$/, async (ctx) => {
     const regionId = ctx.match[1];
     const page = parseInt(ctx.match[2], 10);
     await ctx.answerCallbackQuery();
     await sendDistricts(ctx, regionId, page, true);
-});
-
-bot.callbackQuery("regions", async (ctx) => {
-    const regionKeyboard = new InlineKeyboard();
-    data.regions.forEach((region, index) => {
-        if (index % 2 === 0) regionKeyboard.row();
-        regionKeyboard.text(region.name, `region_${region.id}`);
-    });
-    await ctx.answerCallbackQuery();
-    await ctx.editMessageText("🌍 Viloyatingizni tanlang:", {
-        reply_markup: regionKeyboard,
-    });
 });
 
 bot.callbackQuery(/^district_(\d+)$/, async (ctx) => {
@@ -346,47 +338,6 @@ bot.callbackQuery(/^district_(\d+)$/, async (ctx) => {
     await ctx.deleteMessage();
     await sendQuarters(ctx, districtId, 0, false);
 });
-
-async function sendQuarters(ctx, districtId, page, update = false) {
-    const quarters = data.quarters.filter(m => Number(m.district_id) === Number(districtId));
-
-    const pageSize = 10;
-    const totalPages = Math.ceil(quarters.length / pageSize);
-    const start = page * pageSize;
-    const end = start + pageSize;
-    const paginatedQuarters = quarters.slice(start, end);
-
-    const quartersKeyboard = new InlineKeyboard();
-    paginatedQuarters.forEach((quarter, index) => {
-        if (index % 2 === 0) quartersKeyboard.row();
-        quartersKeyboard.text(quarter.name, `quarters_${quarter.id}`);
-    });
-
-    if (quarters.length > pageSize) {
-        quartersKeyboard.row();
-        if (page > 0) quartersKeyboard.text("⏪ Orqaga", `quarters_${districtId}_${page - 1}`);
-        if (page < totalPages - 1) quartersKeyboard.text("Keyingi ⏩", `quarters_${districtId}_${page + 1}`);
-    }
-
-    const selectedDistrict = data.districts.find(d => Number(d.id) === Number(districtId));
-    if (selectedDistrict) {
-        const regionId = selectedDistrict.region_id;
-        quartersKeyboard.row();
-        quartersKeyboard.text("Tumanlar", `backtodistricts_${regionId}`);
-    }
-
-    const messageText = "🏡 Mahallani tanlang:";
-
-    if (update) {
-        await ctx.editMessageText(messageText, {
-            reply_markup: quartersKeyboard,
-        });
-    } else {
-        await ctx.reply(messageText, {
-            reply_markup: quartersKeyboard,
-        });
-    }
-}
 
 bot.callbackQuery(/^quarters_(\d+)_(\d+)$/, async (ctx) => {
     const districtId = ctx.match[1];
@@ -420,7 +371,14 @@ bot.callbackQuery(/^quarters_(\d+)$/, async (ctx) => {
     await user.save();
 
     await ctx.answerCallbackQuery();
-    await ctx.reply("🏠 Uyingizni manzilini kiriting!");
+
+    if (user.language === "Language-Uzb") {
+        await ctx.reply("🏠 Uyingizni manzilini kiriting!");
+    } else if (user.language === "Language-Rus") {
+        await ctx.reply("🏠 Введите свой домашний адрес!");
+    } else if (user.language === "Language-Eng") {
+        await ctx.reply("🏠 Enter your home address!");
+    }
 });
 
 bot.callbackQuery(/^backtodistricts_(\d+)$/, async (ctx) => {
@@ -429,51 +387,6 @@ bot.callbackQuery(/^backtodistricts_(\d+)$/, async (ctx) => {
     await ctx.deleteMessage();
     await sendDistricts(ctx, regionId, 0, false);
 });
-
-async function sendServices(ctx, page, update = false) {
-    let services;
-    try {
-        services = await serviceModel.find({});
-    } catch (err) {
-        console.error("Xizmatlarni olishda xatolik:", err);
-        return await ctx.reply("Xizmatlar ro'yxatini olishda xatolik yuz berdi!");
-    }
-
-    const pageSize = 5;
-    const totalPages = Math.ceil(services.length / pageSize);
-    const start = page * pageSize;
-    const end = start + pageSize;
-    const paginatedServices = services.slice(start, end);
-
-    const servicesKeyboard = new InlineKeyboard();
-    paginatedServices.forEach((service, index) => {
-        if (index % 2 === 0) servicesKeyboard.row();
-        servicesKeyboard.text(service.uz_name, `service_${service._id}`);
-    });
-
-    console.log(servicesKeyboard);
-
-
-    if (services.length > pageSize) {
-        servicesKeyboard.row();
-        if (page > 0) servicesKeyboard.text("⏪ Orqaga", `services_${page - 1}`);
-        if (page < totalPages - 1) servicesKeyboard.text("Keyingi ⏩", `services_${page + 1}`);
-    }
-
-    servicesKeyboard.row();
-
-    const messageText = "Xizmatni tanlang:";
-
-    if (update) {
-        await ctx.editMessageText(messageText, {
-            reply_markup: servicesKeyboard,
-        });
-    } else {
-        await ctx.reply(messageText, {
-            reply_markup: servicesKeyboard,
-        });
-    }
-}
 
 bot.callbackQuery(/^services_(\d+)$/, async (ctx) => {
     const page = parseInt(ctx.match[1], 10);
@@ -502,8 +415,16 @@ bot.callbackQuery(/^service_(.+)$/, async (ctx) => {
     user.step = 0
     await user.save();
     await ctx.answerCallbackQuery();
-    await ctx.reply("✅ Ma'lumotlaringiz saqlandi!")
-    uzMenyu(ctx)
+    if (user.language === "Language-Uzb") {
+        await ctx.reply("✅ Ma'lumotlaringiz saqlandi!")
+        uzMenyu(ctx)
+    } else if (user.language === "Language-Rus") {
+        await ctx.reply("✅ Ваша информация сохранена!")
+        ruMenyu(ctx)
+    } else if (user.language === "Language-Eng") {
+        await ctx.reply("✅ Your information has been saved!")
+        enMenyu(ctx)
+    }
 });
 
 
@@ -542,4 +463,4 @@ Please restart the bot by pressing /start!`)
 exports.runBot = () => {
     bot.start();
     console.log('Bot ishga tushdi...');
-};
+}; 
