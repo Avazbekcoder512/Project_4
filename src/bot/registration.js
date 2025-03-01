@@ -19,46 +19,49 @@ const enContactKeyboard = new Keyboard()
 
 
 exports.askNextStep = async (ctx, user) => {
-    if (user.step === 1) {
-        if (user.language === "Language-Uzb") {
-            await ctx.reply(`👤  <b>Familiya</b>, <b>Ism</b> va <b>Sharifingizni</b> kiriting!`, { parse_mode: "HTML" });
-        } else if (user.language === "Language-Rus") {
-            await ctx.reply(`👤 Введите свою <b>фамилию</b>, <b>имя</b> и <b>титул</b>!`, { parse_mode: "HTML" });
-        } else if (user.language === "Language-Eng") {
-            await ctx.reply(`👤 Enter your <b>Last Name</b>, <b>First Name</b> and <b>Your Title</b>!`, { parse_mode: "HTML" });
-        }
-    } else if (user.step === 2) {
-        if (user.language === "Language-Uzb") {
-            await ctx.reply(`🎂 Tu'gulgan <b>Kun</b>, <b>Oy</b> va <b>Yilingizni</b> kiriting 
-<b>Masalan:</b>  25-05-2025`, { parse_mode: "HTML" });
-        } else if (user.language === "Language-Rus") {
-            await ctx.reply(`🎂 Введите <b>День</b>, <b>Месяц</b> и <b>Год</b> рождения
-<b>Например:</b> 25-05-2025`, { parse_mode: "HTML" });
-        } else if (user.language === "Language-Eng") {
-            await ctx.reply(`🎂 Enter your <b>Day</b>, <b>Month</b> and <b>Year</b> of birth
-<b>For example:</b> 25-05-2025`, { parse_mode: "HTML" });
-        }
-    } else if (user.step === 3) {
-        if (user.language === "Language-Uzb") {
-            await ctx.reply("📧 Emailingizni kiriting!");
-        } else if (user.language === "Language-Rus") {
-            await ctx.reply("📧 Введите свой адрес электронной почты!");
-        } else if (user.language === "Language-Eng") {
-            await ctx.reply("📧 Enter your email!");
-        }
-    } else if (user.step === 4) {
-        if (user.language === "Language-Uzb") {
-            await ctx.reply("📲 Telefon raqamingizni yuboring buning uchun pastdagi Telefon raqamni yuborish tugmasini bosing!", {
-                reply_markup: uzContactKeyboard
-            });
-        } else if (user.language === "Language-Rus") {
-            await ctx.reply("📲 Отправьте свой номер телефона, нажмите кнопку Отправить номер телефона ниже!", {
-                reply_markup: ruContactKeyboard
-            });
-        } else if (user.language === "Language-Eng") {
-            await ctx.reply("📲 Send your phone number, click the Send Phone Number button below!", {
-                reply_markup: enContactKeyboard
-            });
+
+    if (user.action === "Registration") {
+        if (user.step === 1) {
+            if (user.language === "Language-Uzb") {
+                await ctx.reply(`👤  <b>Familiya</b>, <b>Ism</b> va <b>Sharifingizni</b> kiriting!`, { parse_mode: "HTML" });
+            } else if (user.language === "Language-Rus") {
+                await ctx.reply(`👤 Введите свою <b>фамилию</b>, <b>имя</b> и <b>титул</b>!`, { parse_mode: "HTML" });
+            } else if (user.language === "Language-Eng") {
+                await ctx.reply(`👤 Enter your <b>Last Name</b>, <b>First Name</b> and <b>Your Title</b>!`, { parse_mode: "HTML" });
+            }
+        } else if (user.step === 2) {
+            if (user.language === "Language-Uzb") {
+                await ctx.reply(`🎂 Tu'gulgan <b>Kun</b>, <b>Oy</b> va <b>Yilingizni</b> kiriting 
+    <b>Masalan:</b>  25-05-2025`, { parse_mode: "HTML" });
+            } else if (user.language === "Language-Rus") {
+                await ctx.reply(`🎂 Введите <b>День</b>, <b>Месяц</b> и <b>Год</b> рождения
+    <b>Например:</b> 25-05-2025`, { parse_mode: "HTML" });
+            } else if (user.language === "Language-Eng") {
+                await ctx.reply(`🎂 Enter your <b>Day</b>, <b>Month</b> and <b>Year</b> of birth
+    <b>For example:</b> 25-05-2025`, { parse_mode: "HTML" });
+            }
+        } else if (user.step === 3) {
+            if (user.language === "Language-Uzb") {
+                await ctx.reply("📧 Emailingizni kiriting!");
+            } else if (user.language === "Language-Rus") {
+                await ctx.reply("📧 Введите свой адрес электронной почты!");
+            } else if (user.language === "Language-Eng") {
+                await ctx.reply("📧 Enter your email!");
+            }
+        } else if (user.step === 4) {
+            if (user.language === "Language-Uzb") {
+                await ctx.reply("📲 Telefon raqamingizni yuboring buning uchun pastdagi Telefon raqamni yuborish tugmasini bosing!", {
+                    reply_markup: uzContactKeyboard
+                });
+            } else if (user.language === "Language-Rus") {
+                await ctx.reply("📲 Отправьте свой номер телефона, нажмите кнопку Отправить номер телефона ниже!", {
+                    reply_markup: ruContactKeyboard
+                });
+            } else if (user.language === "Language-Eng") {
+                await ctx.reply("📲 Send your phone number, click the Send Phone Number button below!", {
+                    reply_markup: enContactKeyboard
+                });
+            }
         }
     }
 }
@@ -80,6 +83,14 @@ Please restart the bot by pressing /start!`)
             user.step = 1
             await user.save()
             return this.askNextStep(ctx, user);
+        }
+
+        if (user.role === "patient" && user.language === "Language-Uzb") {
+            return await ctx.reply("❌  Siz bemorlar safiga qabul qilingansiz ma'lumotlaringizni o'zgartirish mumkin emas!")
+        } else if (user.role === "patient" && user.language === "Language-Rus") {
+            return await ctx.reply("❌  Вы приняты в качестве пациента, и ваши данные не могут быть изменены!")
+        } else if (user.role === "patient" && user.language === "Language-Eng") {
+            return await ctx.reply("❌  You have been accepted as a patient and your information cannot be changed!")
         }
 
     } catch (error) {

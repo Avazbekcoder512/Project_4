@@ -7,7 +7,7 @@ const enKeyboard = new InlineKeyboard().text("Change data", "refresh")
 
 exports.uzProfile = async (ctx) => {
     try {
-        const user = await patientModel.findOne({ chatId: ctx.chat.id })
+        const user = await patientModel.findOne({ chatId: ctx.from.id })        
 
         if (!user) {
             await ctx.reply(`Iltimos /start tugmasini bosib botni qayta ishga tushiring!,
@@ -15,7 +15,7 @@ exports.uzProfile = async (ctx) => {
 Please restart the bot by pressing /start!`)
         }
 
-        if (user.email) {
+        if (user.step === 7) {
             await ctx.reply(`
                 Sizning ma'lumotlaringiz:\n\n
 <b>🧑  Ism:</b> ${user.name}\n\n
@@ -56,7 +56,7 @@ exports.ruProfile = async (ctx) => {
 Please restart the bot by pressing /start!`)
         }
 
-        if (user.email) {
+        if (user.step === 7) {
             await ctx.reply(`
                 Ваша информация:\n\n
 <b>🧑  Имя:</b> ${user.name}\n\n
@@ -97,7 +97,7 @@ exports.enProfile = async (ctx) => {
 Please restart the bot by pressing /start!`)
         }
 
-        if (user.email) {
+        if (user.step === 7) {
             await ctx.reply(`
                Your details:\n\n
 <b>🧑  Name:</b> ${user.name}\n\n

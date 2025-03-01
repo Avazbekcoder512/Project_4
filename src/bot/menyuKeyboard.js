@@ -11,7 +11,8 @@ exports.uzMenyu = async (ctx) => {
             .text("🧬  Tahlil natijasi").row()
             .text("📝  Qabulga yozilish")
             .text("👤  Ma'lumotlarim")
-            .resized();
+            .resized()
+            .oneTime()
         await ctx.reply('Kerakli menyuni tanlang', {
             reply_markup: keyboard
         })
@@ -29,7 +30,8 @@ exports.ruMenyu = async (ctx) => {
             .text("🧬  Результат анализа").row()
             .text("📝  Регистрация")
             .text("👤  Моя информация")
-            .resized();
+            .resized()
+            .oneTime()
         await ctx.reply('Выберите желаемое меню', {
             reply_markup: keyboard
         })
@@ -47,7 +49,8 @@ exports.enMenyu = async (ctx) => {
             .text("🧬  Analysis result").row()
             .text("📝  Registration")
             .text("👤  My information")
-            .resized();
+            .resized()
+            .oneTime()
         await ctx.reply('Select the desired menu', {
             reply_markup: keyboard
         })

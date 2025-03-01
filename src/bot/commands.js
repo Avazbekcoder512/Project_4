@@ -88,6 +88,7 @@ Get acquainted with the services and 🧬 know the prices of the tests,\n
 
     bot.command('start', async (ctx) => {
         const user = await patientModel.findOne({ chatId: ctx.chat.id })
+        
         if (!user) {
             const newUser = await patientModel.create({
                 chatId: ctx.chat.id,
@@ -130,6 +131,23 @@ Get acquainted with the services and 🧬 know the prices of the tests,\n
                         reply_markup: new Keyboard().text("📋 Menu").resized()
                     })
                 }
+            } else if (user.action === "Start") {
+                if (user.language === "Language-Uzb") {
+                    await ctx.reply(`Botdan to'liq foydalanish uchun <b>📋 Menyu</b> tugmasini bosing!`, {
+                        parse_mode: 'HTML',
+                        reply_markup: new Keyboard().text("📋 Menyu").resized()
+                    })
+                } else if (user.language === "Language-Rus") {
+                    await ctx.reply(`Чтобы в полной мере использовать возможности бота, нажмите кнопку <b>📋 Меню</b>!`, {
+                        parse_mode: 'HTML',
+                        reply_markup: new Keyboard().text("📋 Меню").resized()
+                    })
+                } else if (user.language === "Language-Eng") {
+                    await ctx.reply(`To use the bot to its full potential, press the <b>📋 Menu</b> button!`, {
+                        parse_mode: 'HTML',
+                        reply_markup: new Keyboard().text("📋 Menu").resized()
+                    })
+                }   
             }
         }
     })
